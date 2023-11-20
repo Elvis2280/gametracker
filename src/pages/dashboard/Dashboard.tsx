@@ -4,17 +4,18 @@ import {
   Avatar,
   Button,
 } from '@nextui-org/react';
-import React from 'react';
 import { FaFilter } from 'react-icons/fa';
 import GameCard from '../../components/gameCard/GameCard';
+import useSession from '../../hooks/session/useSession';
 
 export default function Dashboard() {
+  const { session } = useSession();
   return (
     <div className=" min-h-screen">
       <div className=" px-4 pt-4 pb-20">
         <div className="flex justify-between  w-full">
           <h1 className=" text-2xl font-bold text-center">GameTracker</h1>
-          <Avatar name="EM" />
+          <Avatar name={session?.user?.email?.charAt(0).toUpperCase()} />
         </div>
 
         <div className=" flex items-center gap-x-4 mt-8">
