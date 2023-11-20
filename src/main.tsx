@@ -4,6 +4,7 @@ import './index.css';
 import { NextUIProvider } from '@nextui-org/react';
 import App from './app';
 import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -14,7 +15,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         }}
         className="dark text-foreground"
       >
-        <ToastContainer />
+        <ToastContainer theme="dark" />
         <App />
       </main>
     </NextUIProvider>

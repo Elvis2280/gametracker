@@ -6,18 +6,39 @@ import {
   Chip,
   Image,
 } from '@nextui-org/react';
-import React from 'react';
 import PlatformIcon from '../platformIcon/PlatformIcon';
 import imageExample from '../../../public/game.png';
 import { TbPencil } from 'react-icons/tb';
+import { statusColor } from '../../utils/constants';
+import {
+  genresTypes,
+  platformsTypes,
+  statusTypes,
+} from '../../types/general/general';
 
-export default function GameCard() {
+type GameCardProps = {
+  title: string;
+  image: string;
+  platforms: platformsTypes[];
+  genres: genresTypes[];
+  status: statusTypes;
+};
+
+export default function GameCard({
+  title,
+  image,
+  platforms,
+  genres,
+  status,
+}: GameCardProps) {
   return (
     <div>
       <Card>
         <CardHeader className=" flex flex-col gap-y-2">
           <div className="flex justify-between w-full items-center">
-            <PlatformIcon type="deck" />
+            {platforms.map((platform) => {
+              return <PlatformIcon type={platform} />;
+            })}
             <Button
               variant="flat"
               color="primary"
@@ -28,20 +49,18 @@ export default function GameCard() {
             </Button>
           </div>
           <div className=" flex justify-start w-full gap-x-2">
-            <Chip color="primary" variant="flat" size="sm">
-              Adventure
-            </Chip>
-            <Chip color="primary" variant="flat" size="sm">
-              Action
-            </Chip>
-            <Chip color="primary" variant="flat" size="sm">
-              RPG
-            </Chip>
+            {genres.map((genre) => {
+              return (
+                <Chip key={genre} color="primary" variant="flat" size="sm">
+                  {genre}
+                </Chip>
+              );
+            })}
           </div>
           <div className="flex justify-between w-full items-center">
-            <h3 className=" text-xl font-bold">Game Title</h3>
-            <Chip color="success" variant="dot" size="sm">
-              Completed
+            <h3 className=" text-xl font-bold">{title}</h3>
+            <Chip color={statusColor[status]} variant="dot" size="sm">
+              {status}
             </Chip>
           </div>
         </CardHeader>

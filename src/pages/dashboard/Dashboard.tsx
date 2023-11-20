@@ -3,13 +3,19 @@ import {
   AutocompleteItem,
   Avatar,
   Button,
+  Spinner,
 } from '@nextui-org/react';
 import { FaFilter } from 'react-icons/fa';
 import GameCard from '../../components/gameCard/GameCard';
 import useSession from '../../hooks/session/useSession';
+import useGameData from './hooks/useGameData';
+import { gameListResponseDto } from '../../types/responses/gameResponseDto';
 
 export default function Dashboard() {
   const { session } = useSession();
+  const { games } = useGameData();
+  console.log(games);
+
   return (
     <div className=" min-h-screen">
       <div className=" px-4 pt-4 pb-20">
@@ -33,8 +39,23 @@ export default function Dashboard() {
         </div>
 
         <div className="mt-6 flex flex-col gap-y-3">
-          <GameCard />
-          <GameCard />
+          {games?.data ? (
+            games?.data?.map((game: gameListResponseDto) => {
+              return (
+                <GameCard
+                  title={game.game_title}
+                  image={game.game_picture}
+                  platforms={game.platforms}
+                  genres={game.genres}
+                  status={game.status}
+                />
+              );
+            })
+          ) : (
+            <div className=" flex-1 flex justify-center items-center h-full">
+              <Spinner size="lg" />
+            </div>
+          )}
         </div>
         <div className=" relative">
           <Button
