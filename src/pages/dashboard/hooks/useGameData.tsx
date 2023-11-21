@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
-import supabase from '../../../utils/databaseClient';
 import { toast } from 'react-toastify';
 import { PostgrestError } from '@supabase/supabase-js';
 import { gameListResponseDto } from '../../../types/responses/gameResponseDto';
+import { getAllGames, saveGame } from '../utils/gamesService';
+import useSession from '../../../hooks/session/useSession';
+import { gameFieldsTypes } from '../../../types/general/general';
 
 type gamesType = {
   data: gameListResponseDto[] | null;
@@ -11,16 +13,13 @@ type gamesType = {
 
 export default function useGameData() {
   const [games, setGames] = useState<gamesType | null>(null);
+  const { session } = useSession();
 
   useEffect(() => {
-    const getGames = async () => {
-      const { data, error }: gamesType = await supabase
-        .from('game')
-        .select('*');
-      setGames({ data, error });
-    };
-
-    getGames();
+    (async () => {
+      const allGames = await getAllGames(session?.user?.id ?? '');
+      setGames(allGames);
+    })();
   }, []);
 
   useEffect(() => {
@@ -29,5 +28,23 @@ export default function useGameData() {
     }
   }, [games?.error?.message]);
 
-  return { games };
+  const handleSaveGame = async (data: gameFieldsTypes) => {
+    const newGame = await saveGame(data, session?.user?.id ?? '');
+    if (newGame.error) {
+      toast.error('Error al guardar el juego');
+    } else {
+      setGames((prevState: any) => {
+        if (prevState?.data) {
+          return {
+            ...prevState,
+            data: [...prevState.data, newGame.data],
+          };
+        }
+        return prevState;
+      });
+      toast.success('Juego guardado correctamente');
+    }
+  };
+
+  return { games, handleSaveGame };
 }

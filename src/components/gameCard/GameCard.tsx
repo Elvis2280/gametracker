@@ -26,18 +26,18 @@ type GameCardProps = {
 
 export default function GameCard({
   title,
-  image,
   platforms,
   genres,
   status,
+  image,
 }: GameCardProps) {
   return (
     <div>
       <Card>
         <CardHeader className=" flex flex-col gap-y-2">
           <div className="flex justify-between w-full items-center">
-            {platforms.map((platform) => {
-              return <PlatformIcon type={platform} />;
+            {platforms.map((platform, i) => {
+              return <PlatformIcon key={i} type={platform} />;
             })}
             <Button
               variant="flat"
@@ -49,9 +49,9 @@ export default function GameCard({
             </Button>
           </div>
           <div className=" flex justify-start w-full gap-x-2">
-            {genres.map((genre) => {
+            {genres.map((genre, i) => {
               return (
-                <Chip key={genre} color="primary" variant="flat" size="sm">
+                <Chip key={i} color="primary" variant="flat" size="sm">
                   {genre}
                 </Chip>
               );
@@ -65,7 +65,7 @@ export default function GameCard({
           </div>
         </CardHeader>
         <CardBody className="w-full flex flex-col items-center">
-          <Image isZoomed width={'100%'} src={imageExample} alt="Game Image" />
+          <Image isZoomed width={'100%'} src={image} alt="Game Image" />
         </CardBody>
       </Card>
     </div>

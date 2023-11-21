@@ -38,14 +38,20 @@ export default function Login() {
             <p className=" text-lg text-center pb-2">Welcome Back!</p>
 
             <div className=" flex flex-col gap-y-4">
-              <Input label="Email" size="sm" {...register('email')} />
-              {errors.email && (
-                <p className=" text-red-400">{errors.email.message}</p>
-              )}
+              <Input
+                label="Email"
+                size="sm"
+                {...register('email')}
+                isInvalid={Boolean(errors.email)}
+                errorMessage={errors.email?.message}
+              />
+
               <Input
                 type={value ? 'text' : 'password'}
                 label="Password"
                 size="sm"
+                isInvalid={Boolean(errors.password)}
+                errorMessage={errors.password?.message}
                 endContent={
                   <div className=" flex items-center h-full">
                     <Button
@@ -60,9 +66,6 @@ export default function Login() {
                 }
                 {...register('password')}
               />
-              {errors.password && (
-                <p className=" text-red-400">{errors.password.message}</p>
-              )}
             </div>
           </div>
           <div className=" pb-10">

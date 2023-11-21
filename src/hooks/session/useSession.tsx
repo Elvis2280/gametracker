@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import supabase from '../../utils/databaseClient';
 import { Session, User } from '@supabase/supabase-js';
@@ -23,7 +23,7 @@ export default function useSession() {
     }
   }, [session]);
 
-  useMemo(() => {
+  useEffect(() => {
     if (session) {
       navegate('/');
     } else {
@@ -37,7 +37,7 @@ export default function useSession() {
       password,
     });
     if (error) {
-      toast.error('Error al iniciar sesión');
+      return toast.error('Error al iniciar sesión');
     }
 
     setSession(data);

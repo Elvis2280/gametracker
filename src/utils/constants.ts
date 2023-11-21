@@ -2,6 +2,8 @@ import { StatusColor } from '../types/general/general';
 
 export const statusList = ['Not started', 'In progress', 'Completed'];
 
+export const platformList = ['xbox', 'deck'];
+
 export const statusColor: Record<string, StatusColor> = {
   'Not started': 'danger',
   'In progress': 'warning',

@@ -24,3 +24,12 @@ export type genresTypes =
   | 'Open World';
 
 export type statusTypes = 'Not started' | 'In progress' | 'Completed';
+
+export type gameFieldsTypes = {
+  game_title: string;
+  game_description: string;
+  status: statusTypes;
+  platforms: platformsTypes[];
+  genres: genresTypes[];
+  game_picture: string;
+};
