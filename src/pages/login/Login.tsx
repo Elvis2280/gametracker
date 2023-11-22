@@ -32,7 +32,7 @@ export default function Login() {
   return (
     <div className=" relative">
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className=" min-h-screen p-4 flex flex-col justify-between ">
+        <div className=" h-screen p-4 flex flex-col justify-between ">
           <h1 className=" text-xl font-bold text-center">GameTracker</h1>
           <div className=" flex flex-col gap-y-4">
             <p className=" text-lg text-center pb-2">Welcome Back!</p>
@@ -40,7 +40,6 @@ export default function Login() {
             <div className=" flex flex-col gap-y-4">
               <Input
                 label="Email"
-                size="sm"
                 {...register('email')}
                 isInvalid={Boolean(errors.email)}
                 errorMessage={errors.email?.message}
@@ -49,7 +48,6 @@ export default function Login() {
               <Input
                 type={value ? 'text' : 'password'}
                 label="Password"
-                size="sm"
                 isInvalid={Boolean(errors.password)}
                 errorMessage={errors.password?.message}
                 endContent={
