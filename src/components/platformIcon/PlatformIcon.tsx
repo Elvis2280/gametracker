@@ -1,4 +1,3 @@
-import React from 'react';
 import { FaXbox, FaSteam } from 'react-icons/fa';
 
 type Props = {
