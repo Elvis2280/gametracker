@@ -7,7 +7,6 @@ import {
   Image,
 } from '@nextui-org/react';
 import PlatformIcon from '../platformIcon/PlatformIcon';
-import imageExample from '../../../public/game.png';
 import { TbPencil } from 'react-icons/tb';
 import { statusColor } from '../../utils/constants';
 import {
