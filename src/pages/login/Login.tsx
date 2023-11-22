@@ -39,13 +39,20 @@ export default function Login() {
 
             <div className=" flex flex-col gap-y-4">
               <Input
+                size="md"
                 label="Email"
                 {...register('email')}
                 isInvalid={Boolean(errors.email)}
                 errorMessage={errors.email?.message}
+                classNames={{
+                  input: ' text-md',
+                }}
               />
 
               <Input
+                classNames={{
+                  input: ' text-md',
+                }}
                 type={value ? 'text' : 'password'}
                 label="Password"
                 isInvalid={Boolean(errors.password)}
