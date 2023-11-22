@@ -11,40 +11,39 @@ type gamesType = {
   error: PostgrestError | null;
 };
 
+type saveGameFunctionType = {
+  (data: gameFieldsTypes, onSuccess?: () => void): void;
+};
+
 export default function useGameData() {
   const [games, setGames] = useState<gamesType | null>(null);
   const { session } = useSession();
 
+  const getAllGamesData = async () => {
+    const allGames = await getAllGames(session?.user?.id ?? '');
+    setGames(allGames);
+  }; // fetch on demand with query params
+
+  const handleSaveGame: saveGameFunctionType = async (data, onSuccess) => {
+    const newGame = await saveGame(data, session?.user?.id ?? '');
+    if (newGame.error) {
+      toast.error('Error al guardar el juego');
+    } else {
+      getAllGamesData();
+      toast.success('Juego guardado correctamente');
+      onSuccess && onSuccess();
+    }
+  }; // save game to db
+
   useEffect(() => {
-    (async () => {
-      const allGames = await getAllGames(session?.user?.id ?? '');
-      setGames(allGames);
-    })();
-  }, []);
+    getAllGamesData();
+  }, []); // fetch all games on mount
 
   useEffect(() => {
     if (games?.error) {
       toast.error('Error al cargar los juegos');
     }
-  }, [games?.error?.message]);
+  }, [games?.error?.message]); // show error if exists
 
-  const handleSaveGame = async (data: gameFieldsTypes) => {
-    const newGame = await saveGame(data, session?.user?.id ?? '');
-    if (newGame.error) {
-      toast.error('Error al guardar el juego');
-    } else {
-      setGames((prevState: any) => {
-        if (prevState?.data) {
-          return {
-            ...prevState,
-            data: [...prevState.data, newGame.data],
-          };
-        }
-        return prevState;
-      });
-      toast.success('Juego guardado correctamente');
-    }
-  };
-
-  return { games, handleSaveGame };
+  return { games, handleSaveGame, getAllGamesData };
 }

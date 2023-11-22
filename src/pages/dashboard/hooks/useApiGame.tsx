@@ -41,7 +41,6 @@ export default function useApiGame() {
 
   const handleSelectGame = (gameId: number) => {
     const game = searchGamesData?.results.find((game) => game.id === gameId);
-    console.log(game);
     setSelectedGame(game ?? null);
   };
 

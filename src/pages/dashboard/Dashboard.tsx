@@ -16,7 +16,7 @@ import useToggle from '../../hooks/useToggle/useToggle';
 
 export default function Dashboard() {
   const { session } = useSession();
-  const { games } = useGameData();
+  const { games, getAllGamesData } = useGameData();
   const { value: addModalBool, toggleValue: toggleAddModalValue } = useToggle();
 
   return (
@@ -77,6 +77,7 @@ export default function Dashboard() {
           <ModalAddGame
             isActived={addModalBool}
             handleModal={toggleAddModalValue}
+            reloadGames={getAllGamesData}
           />
         </div>
       </div>

@@ -64,7 +64,13 @@ export default function GameCard({
           </div>
         </CardHeader>
         <CardBody className="w-full flex flex-col items-center">
-          <Image isZoomed width={'100%'} src={image} alt="Game Image" />
+          <Image
+            loading="lazy"
+            isZoomed
+            width={'100%'}
+            src={image}
+            alt="Game Image"
+          />
         </CardBody>
       </Card>
     </div>

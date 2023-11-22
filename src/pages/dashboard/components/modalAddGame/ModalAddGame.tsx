@@ -28,6 +28,7 @@ import useGameData from '../../hooks/useGameData';
 type Props = {
   isActived: boolean;
   handleModal: () => void;
+  reloadGames: () => void;
 };
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -42,7 +43,11 @@ type apiGameHook = {
   errors: any;
 };
 
-export default function ModalAddGame({ isActived, handleModal }: Props) {
+export default function ModalAddGame({
+  isActived,
+  handleModal,
+  reloadGames,
+}: Props) {
   const {
     debounceSearch,
     isSearchFetching,
@@ -62,11 +67,17 @@ export default function ModalAddGame({ isActived, handleModal }: Props) {
         <ModalContent>
           <form
             onSubmit={handleSubmit((e: any) => {
-              handleSaveGame({
-                ...e,
-                platforms: e.platforms.split(','),
-                genres: e.genres.split(','),
-              });
+              handleSaveGame(
+                {
+                  ...e,
+                  platforms: e.platforms.split(','),
+                  genres: e.genres.split(','),
+                },
+                () => {
+                  reloadGames();
+                  handleModal();
+                },
+              );
             })}
           >
             <ModalHeader>Add Game</ModalHeader>
