@@ -44,6 +44,10 @@ export default function useApiGame() {
     setSelectedGame(game ?? null);
   };
 
+  const resetGameSelection = () => {
+    setSelectedGame(null);
+  };
+
   const {
     register,
     handleSubmit,
@@ -83,5 +87,6 @@ export default function useApiGame() {
     register,
     handleSubmit,
     errors,
+    resetGameSelection,
   };
 }

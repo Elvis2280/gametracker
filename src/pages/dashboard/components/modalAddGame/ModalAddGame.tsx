@@ -41,6 +41,7 @@ type apiGameHook = {
   register: any;
   handleSubmit: any;
   errors: any;
+  resetGameSelection: () => void;
 };
 
 export default function ModalAddGame({
@@ -57,6 +58,7 @@ export default function ModalAddGame({
     register,
     handleSubmit,
     errors,
+    resetGameSelection,
   }: apiGameHook = useApiGame();
 
   const { handleSaveGame } = useGameData();
@@ -76,6 +78,7 @@ export default function ModalAddGame({
                 () => {
                   reloadGames();
                   handleModal();
+                  resetGameSelection();
                 },
               );
             })}
@@ -167,7 +170,13 @@ export default function ModalAddGame({
             </ModalBody>
             <ModalFooter>
               <div className="flex justify-between w-full">
-                <Button variant="light" onClick={handleModal}>
+                <Button
+                  variant="light"
+                  onClick={() => {
+                    handleModal();
+                    resetGameSelection();
+                  }}
+                >
                   Cancel
                 </Button>
                 <Button type="submit" color="primary">
