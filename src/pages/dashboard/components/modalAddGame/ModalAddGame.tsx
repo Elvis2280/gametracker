@@ -86,7 +86,6 @@ export default function ModalAddGame({
                 <Autocomplete
                   disabled={isSearchFetching}
                   startContent={<IoGameControllerOutline />}
-                  size="sm"
                   label="search a game to add"
                   onInputChange={debounceSearch}
                   className="mb-8"
@@ -108,7 +107,6 @@ export default function ModalAddGame({
                 <Input
                   disabled
                   label="Title"
-                  size="sm"
                   value={selectedGame?.name ?? ''}
                   isInvalid={Boolean(errors.title)}
                   errorMessage={errors.title?.message}
@@ -116,14 +114,12 @@ export default function ModalAddGame({
                 />
                 <Textarea
                   label="Description"
-                  size="sm"
                   isInvalid={Boolean(errors.description)}
                   errorMessage={errors.description?.message}
                   {...register('game_description')}
                 />
                 <Select
                   label="Status"
-                  size="sm"
                   isInvalid={Boolean(errors.status)}
                   errorMessage={errors.status?.message}
                   {...register('status')}
@@ -141,7 +137,6 @@ export default function ModalAddGame({
                   errorMessage={errors.categories?.message}
                   selectionMode="multiple"
                   label="Categories"
-                  size="sm"
                   {...register('genres')}
                 >
                   {gameGenres.map((genre) => {

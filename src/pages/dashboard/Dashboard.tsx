@@ -3,6 +3,9 @@ import {
   AutocompleteItem,
   Avatar,
   Button,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   Spinner,
 } from '@nextui-org/react';
 import { FiFilter } from 'react-icons/fi';
@@ -15,7 +18,7 @@ import ModalAddGame from './components/modalAddGame/ModalAddGame';
 import useToggle from '../../hooks/useToggle/useToggle';
 
 export default function Dashboard() {
-  const { session } = useSession();
+  const { session, logoutHandler } = useSession();
   const { games, getAllGamesData } = useGameData();
   const { value: addModalBool, toggleValue: toggleAddModalValue } = useToggle();
 
@@ -24,7 +27,16 @@ export default function Dashboard() {
       <div className=" px-4 pt-4 pb-20">
         <div className="flex justify-between  w-full">
           <h1 className=" text-2xl font-bold text-center">GameTracker</h1>
-          <Avatar name={getAvatarLetter(session?.user?.email ?? '')} />
+          <Popover placement="bottom">
+            <PopoverTrigger>
+              <Avatar name={getAvatarLetter(session?.user?.email ?? '')} />
+            </PopoverTrigger>
+            <PopoverContent>
+              <Button onClick={logoutHandler} size="sm" variant="light">
+                Log out
+              </Button>
+            </PopoverContent>
+          </Popover>
         </div>
 
         <div className=" flex items-center gap-x-4 mt-8">
@@ -70,7 +82,7 @@ export default function Dashboard() {
           <Button
             onClick={toggleAddModalValue}
             color="primary"
-            className=" fixed bottom-4 z-10 w-3/4 left-2/4 -translate-x-2/4"
+            className=" fixed bottom-4 z-10 w-4/5 left-2/4 -translate-x-2/4"
           >
             Add a new game
           </Button>

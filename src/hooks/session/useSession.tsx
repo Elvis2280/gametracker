@@ -44,5 +44,16 @@ export default function useSession() {
     sessionStorage.setItem('gametrackerSession', JSON.stringify(data));
   };
 
-  return { session, loginHandler };
+  const logoutHandler = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      return toast.error('Error al cerrar sesión');
+    }
+
+    setSession(null);
+    sessionStorage.removeItem('gametrackerSession');
+    toast.success('Hasta luego!');
+  };
+
+  return { session, loginHandler, logoutHandler };
 }
