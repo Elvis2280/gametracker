@@ -23,6 +23,7 @@ export default function useGameData() {
     completed: 0,
   });
   const { session } = useSession();
+  const [isSaving, setIsSaving] = useState(false);
 
   const getAllGamesData = async (status: Key = tabStatus.active) => {
     const allGames = await getAllGames({
@@ -50,13 +51,17 @@ export default function useGameData() {
   }; // set tabs count
 
   const handleSaveGame: saveGameFunctionType = async (data, onSuccess) => {
+    if (isSaving) return;
+    setIsSaving(true);
     const newGame = await saveGame(data, session?.user?.id ?? '');
     if (newGame.error) {
+      setIsSaving(false);
       toast.error('Error al guardar el juego');
     } else {
       getAllGamesData();
       toast.success('Juego guardado correctamente');
       onSuccess && onSuccess();
+      setIsSaving(false);
     }
   }; // save game to db
 

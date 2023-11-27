@@ -30,9 +30,9 @@ export default function Login() {
     loginHandler(data.email, data.password);
   };
   return (
-    <div className=" relative">
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className=" h-screen p-4 flex flex-col justify-between ">
+    <div className=" relative h-screen">
+      <form className=" h-full" onSubmit={handleSubmit(onSubmit)}>
+        <div className="h-full p-4 flex flex-col justify-between ">
           <h1 className=" text-xl font-bold text-center">GameTracker</h1>
           <div className=" flex flex-col gap-y-4">
             <p className=" text-lg text-center pb-2">Welcome Back!</p>
