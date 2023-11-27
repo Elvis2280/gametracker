@@ -1,15 +1,34 @@
+import { Key } from 'react';
 import { gameFieldsTypes } from '../../../types/general/general';
+import { gameStatus, tabStatus } from '../../../utils/constants';
 import supabase from '../../../utils/databaseClient';
 
-export const getAllGames = async (userId: string) => {
+type gamesQueryParams = {
+  userId: string;
+  query: {
+    status: Key;
+  };
+};
+
+export const getAllGames = async ({ userId, query }: gamesQueryParams) => {
   if (!userId) throw new Error('User id is required');
 
-  const games = await supabase
-    .from('game')
-    .select('*')
-    .filter('user_id', 'eq', userId);
+  if (query.status === tabStatus.active) {
+    const games = await supabase
+      .from('game')
+      .select('*')
+      .filter('user_id', 'eq', userId)
+      .neq('status', gameStatus.completed);
+    return games;
+  } else {
+    const games = await supabase
+      .from('game')
+      .select('*')
+      .filter('user_id', 'eq', userId)
+      .eq('status', gameStatus.completed);
 
-  return games;
+    return games;
+  }
 };
 
 export const saveGame = async (game: gameFieldsTypes, userId: string) => {

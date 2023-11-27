@@ -16,10 +16,11 @@ import { gameListResponseDto } from '../../types/responses/gameResponseDto';
 import { getAvatarLetter } from './utils/gamesService';
 import ModalAddGame from './components/modalAddGame/ModalAddGame';
 import useToggle from '../../hooks/useToggle/useToggle';
+import TabsGames from './components/TabsGames';
 
 export default function Dashboard() {
   const { session, logoutHandler } = useSession();
-  const { games, getAllGamesData } = useGameData();
+  const { games, getAllGamesData, tabsCount } = useGameData();
   const { value: addModalBool, toggleValue: toggleAddModalValue } = useToggle();
 
   return (
@@ -59,6 +60,11 @@ export default function Dashboard() {
         </div>
 
         <div className="mt-6 flex flex-col gap-y-3">
+          <TabsGames
+            onChangeTab={getAllGamesData}
+            activeCount={tabsCount.active}
+            completedCount={tabsCount.completed}
+          />
           {games?.data ? (
             games?.data?.map((game: gameListResponseDto) => {
               return (

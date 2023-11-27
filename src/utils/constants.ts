@@ -24,3 +24,14 @@ export const gameGenres = [
   'MMORPG',
   'Open World',
 ];
+
+export const tabStatus = {
+  active: 'active',
+  completed: 'completed',
+};
+
+export const gameStatus = {
+  notStarted: 'Not started',
+  inProgress: 'In progress',
+  completed: 'Completed',
+};

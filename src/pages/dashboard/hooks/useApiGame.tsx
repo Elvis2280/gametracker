@@ -20,8 +20,10 @@ type querySearchApiType = {
 export default function useApiGame() {
   const [query, setQuery] = useState<string>('');
   const [selectedGame, setSelectedGame] = useState<gamesApiDto | null>(null);
+  const [searchGamesData, setSearchGamesData] = useState<
+    gamesApiResponseDto | undefined
+  >(undefined);
   const {
-    data: searchGamesData,
     refetch: fetchSearchGameApi,
     isFetching: isSearchFetching,
   }: querySearchApiType = useQuery(
@@ -32,12 +34,15 @@ export default function useApiGame() {
       onError: () => toast.error('Error al buscar los juegos'),
       refetchOnWindowFocus: false,
       refetchInterval: false,
+      onSuccess: (data: gamesApiResponseDto) => {
+        setSearchGamesData(data);
+      },
     },
   ); // fetch on demand with query params
 
   const debounceSearch = useDebouncedCallback((gameName: string) => {
     setQuery(gameName);
-  }, 2000); // debounce search
+  }, 1000); // debounce search
 
   const handleSelectGame = (gameId: number) => {
     const game = searchGamesData?.results.find((game) => game.id === gameId);
@@ -46,6 +51,7 @@ export default function useApiGame() {
 
   const resetGameSelection = () => {
     setSelectedGame(null);
+    setSearchGamesData(undefined);
   };
 
   const {
