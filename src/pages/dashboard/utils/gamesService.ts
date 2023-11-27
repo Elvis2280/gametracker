@@ -37,6 +37,7 @@ export const saveGame = async (game: gameFieldsTypes, userId: string) => {
   const gameSaved = await supabase
     .from('game')
     .insert({ ...game, user_id: userId });
+
   return gameSaved;
 };
 

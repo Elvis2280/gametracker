@@ -55,7 +55,6 @@ export default function useGameData() {
       toast.error('Error al guardar el juego');
     } else {
       getAllGamesData();
-      getGamesCount();
       toast.success('Juego guardado correctamente');
       onSuccess && onSuccess();
     }
@@ -65,6 +64,10 @@ export default function useGameData() {
     getAllGamesData();
     getGamesCount();
   }, []); // fetch all games on mount
+
+  useEffect(() => {
+    getGamesCount();
+  }, [games]); // update tabs count when new game is added
 
   useEffect(() => {
     if (games?.error) {
