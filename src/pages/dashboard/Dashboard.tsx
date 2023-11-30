@@ -17,11 +17,18 @@ import { getAvatarLetter } from './utils/gamesService';
 import ModalAddGame from './components/modalAddGame/ModalAddGame';
 import useToggle from '../../hooks/useToggle/useToggle';
 import TabsGames from './components/TabsGames';
+import ModalEditGame from './components/ModalEditGame';
 
 export default function Dashboard() {
   const { session, logoutHandler } = useSession();
   const { games, getAllGamesData, tabsCount } = useGameData();
   const { value: addModalBool, toggleValue: toggleAddModalValue } = useToggle();
+  const { value: editModalBool, toggleValue: toggleEditModalValue } =
+    useToggle();
+
+  const test = (id: number) => {
+    console.log(id);
+  };
 
   return (
     <div className=" min-h-screen">
@@ -75,6 +82,10 @@ export default function Dashboard() {
                   platforms={game.platforms}
                   genres={game.genres}
                   status={game.status}
+                  editGameHandle={() => {
+                    test(game.id);
+                    toggleEditModalValue();
+                  }}
                 />
               );
             })
@@ -96,6 +107,10 @@ export default function Dashboard() {
             isActived={addModalBool}
             handleModal={toggleAddModalValue}
             reloadGames={getAllGamesData}
+          />
+          <ModalEditGame
+            isActived={editModalBool}
+            handleModal={toggleEditModalValue}
           />
         </div>
       </div>

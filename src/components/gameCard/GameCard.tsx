@@ -21,6 +21,7 @@ type GameCardProps = {
   platforms: platformsTypes[];
   genres: genresTypes[];
   status: statusTypes;
+  editGameHandle: () => void;
 };
 
 export default function GameCard({
@@ -29,6 +30,7 @@ export default function GameCard({
   genres,
   status,
   image,
+  editGameHandle,
 }: GameCardProps) {
   return (
     <div>
@@ -43,6 +45,7 @@ export default function GameCard({
               color="primary"
               className=" text-xl"
               isIconOnly
+              onClick={editGameHandle}
             >
               <TbPencil />
             </Button>
