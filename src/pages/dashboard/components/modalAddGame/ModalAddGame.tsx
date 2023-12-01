@@ -23,12 +23,13 @@ import {
   platformList,
   statusList,
 } from '../../../../utils/constants';
-import useGameData from '../../hooks/useGameData';
+import { saveGameFunctionType } from '../../hooks/useGameData';
 
 type Props = {
   isActived: boolean;
   handleModal: () => void;
   reloadGames: () => void;
+  handleSaveGame: saveGameFunctionType;
 };
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -48,6 +49,7 @@ export default function ModalAddGame({
   isActived,
   handleModal,
   reloadGames,
+  handleSaveGame,
 }: Props) {
   const {
     debounceSearch,
@@ -60,8 +62,6 @@ export default function ModalAddGame({
     errors,
     resetGameSelection,
   }: apiGameHook = useApiGame();
-
-  const { handleSaveGame } = useGameData();
 
   return (
     <div>

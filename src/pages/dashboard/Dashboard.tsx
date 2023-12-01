@@ -21,14 +21,20 @@ import ModalEditGame from './components/ModalEditGame';
 
 export default function Dashboard() {
   const { session, logoutHandler } = useSession();
-  const { games, getAllGamesData, tabsCount } = useGameData();
+  const {
+    games,
+    getAllGamesData,
+    tabsCount,
+    handleSetSelectedGame,
+    formikEditGame,
+    handleSaveGame,
+  } = useGameData();
+
+  console.log(formikEditGame.getValues());
+
   const { value: addModalBool, toggleValue: toggleAddModalValue } = useToggle();
   const { value: editModalBool, toggleValue: toggleEditModalValue } =
     useToggle();
-
-  const test = (id: number) => {
-    console.log(id);
-  };
 
   return (
     <div className=" min-h-screen">
@@ -83,7 +89,7 @@ export default function Dashboard() {
                   genres={game.genres}
                   status={game.status}
                   editGameHandle={() => {
-                    test(game.id);
+                    handleSetSelectedGame(game.id);
                     toggleEditModalValue();
                   }}
                 />
@@ -104,6 +110,7 @@ export default function Dashboard() {
             Add a new game
           </Button>
           <ModalAddGame
+            handleSaveGame={handleSaveGame}
             isActived={addModalBool}
             handleModal={toggleAddModalValue}
             reloadGames={getAllGamesData}
@@ -111,6 +118,7 @@ export default function Dashboard() {
           <ModalEditGame
             isActived={editModalBool}
             handleModal={toggleEditModalValue}
+            formikEditGame={formikEditGame}
           />
         </div>
       </div>

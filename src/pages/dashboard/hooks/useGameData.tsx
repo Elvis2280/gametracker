@@ -6,18 +6,22 @@ import { getAllGames, saveGame } from '../utils/gamesService';
 import useSession from '../../../hooks/session/useSession';
 import { gameFieldsTypes } from '../../../types/general/general';
 import { tabStatus } from '../../../utils/constants';
+import { yupResolver } from '@hookform/resolvers/yup';
+import addGameSchema from '../schema';
+import { useForm } from 'react-hook-form';
 
 type gamesType = {
   data: gameListResponseDto[] | null;
   error: PostgrestError | null;
 };
 
-type saveGameFunctionType = {
+export type saveGameFunctionType = {
   (data: gameFieldsTypes, onSuccess?: () => void): void;
 };
 
 export default function useGameData() {
   const [games, setGames] = useState<gamesType | null>(null);
+
   const [tabsCount, setTabsCount] = useState({
     active: 0,
     completed: 0,
@@ -65,6 +69,38 @@ export default function useGameData() {
     }
   }; // save game to db
 
+  const handleSetSelectedGame = (id: number | null) => {
+    const game = games?.data?.find(
+      (game: gameListResponseDto) => game.id === id,
+    );
+    if (game) {
+      setValue('game_title', game.game_title);
+      setValue('game_description', game.game_description);
+      setValue('status', game.status);
+      setValue('genres', game.genres.toString());
+      setValue('platforms', game.platforms.toString());
+      setValue('game_picture', game.game_picture);
+    }
+  }; // set selected game to edit by game id
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    getValues,
+  } = useForm({
+    defaultValues: {
+      game_title: '',
+      game_description: '',
+      status: '',
+      genres: '',
+      platforms: '',
+      game_picture: '',
+    },
+    resolver: yupResolver(addGameSchema),
+  });
+
   useEffect(() => {
     getAllGamesData();
     getGamesCount();
@@ -80,5 +116,18 @@ export default function useGameData() {
     }
   }, [games?.error?.message]); // show error if exists
 
-  return { games, handleSaveGame, getAllGamesData, tabsCount };
+  return {
+    games,
+    handleSaveGame,
+    getAllGamesData,
+    tabsCount,
+    handleSetSelectedGame,
+    formikEditGame: {
+      register,
+      handleSubmit,
+      errors,
+      setValue,
+      getValues,
+    },
+  };
 }
