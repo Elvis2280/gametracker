@@ -30,7 +30,7 @@ export default function Login() {
     loginHandler(data.email, data.password);
   };
   return (
-    <div className=" relative h-screen">
+    <div className="relative max-h-[100dvh]">
       <form className=" h-full" onSubmit={handleSubmit(onSubmit)}>
         <div className="h-full p-4 flex flex-col justify-between ">
           <h1 className=" text-xl font-bold text-center">GameTracker</h1>
