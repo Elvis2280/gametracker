@@ -41,6 +41,14 @@ export const saveGame = async (game: gameFieldsTypes, userId: string) => {
   return gameSaved;
 };
 
+export const deleteGame = async (gameId: number) => {
+  if (!gameId) throw new Error('Game id is required');
+
+  const deleteGame = await supabase.from('game').delete().match({ id: gameId });
+
+  return deleteGame;
+};
+
 export const getAvatarLetter = (name: string) => {
   return name.charAt(0).toUpperCase();
 };

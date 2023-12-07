@@ -9,7 +9,6 @@ import {
   Select,
   SelectItem,
   Textarea,
-  Tooltip,
 } from '@nextui-org/react';
 import { gameGenres, platformList, statusList } from '../../../utils/constants';
 import { FaRegTrashAlt } from 'react-icons/fa';
@@ -19,6 +18,7 @@ import useToggle from '../../../hooks/useToggle/useToggle';
 type Props = {
   isActived: boolean;
   handleModal: () => void;
+  handleDeleteGame: () => void;
   formikEditGame: {
     register: any;
     handleSubmit: any;
@@ -32,6 +32,7 @@ export default function ModalEditGame({
   isActived,
   handleModal,
   formikEditGame,
+  handleDeleteGame,
 }: Props) {
   const { toggleValue, value } = useToggle();
   return (
@@ -42,23 +43,14 @@ export default function ModalEditGame({
             <ModalHeader>Edit Game</ModalHeader>
             <ModalBody>
               <div className=" flex justify-end pb-2">
-                <Tooltip
-                  color="warning"
-                  isOpen={value}
-                  content="double tap to delete"
+                <Button
+                  onClick={toggleValue}
+                  variant="flat"
+                  color="danger"
+                  isIconOnly
                 >
-                  <Button
-                    onClick={toggleValue}
-                    onDoubleClick={() => {
-                      alert('delete');
-                    }}
-                    variant="flat"
-                    color="danger"
-                    isIconOnly
-                  >
-                    <FaRegTrashAlt />
-                  </Button>
-                </Tooltip>
+                  <FaRegTrashAlt />
+                </Button>
               </div>
               <div className=" flex flex-col gap-y-3">
                 <Input
@@ -145,6 +137,37 @@ export default function ModalEditGame({
               </div>
             </ModalFooter>
           </form>
+        </ModalContent>
+      </Modal>
+      <Modal
+        backdrop="blur"
+        isOpen={value}
+        onClose={toggleValue}
+        placement="center"
+      >
+        <ModalContent>
+          <ModalHeader>Delete Game?</ModalHeader>
+          <ModalBody>
+            <p>Are you sure you want to delete this game?</p>
+          </ModalBody>
+          <ModalFooter>
+            <div className="flex justify-between">
+              <Button onClick={toggleValue} variant="light">
+                Cancel
+              </Button>
+              <Button
+                onClick={() => {
+                  toggleValue();
+                  handleModal();
+                  handleDeleteGame();
+                }}
+                variant="flat"
+                color="danger"
+              >
+                Delete
+              </Button>
+            </div>
+          </ModalFooter>
         </ModalContent>
       </Modal>
     </div>

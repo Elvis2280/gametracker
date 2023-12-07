@@ -28,9 +28,8 @@ export default function Dashboard() {
     handleSetSelectedGame,
     formikEditGame,
     handleSaveGame,
+    handleDeleteGame,
   } = useGameData();
-
-  console.log(formikEditGame.getValues());
 
   const { value: addModalBool, toggleValue: toggleAddModalValue } = useToggle();
   const { value: editModalBool, toggleValue: toggleEditModalValue } =
@@ -119,6 +118,7 @@ export default function Dashboard() {
             isActived={editModalBool}
             handleModal={toggleEditModalValue}
             formikEditGame={formikEditGame}
+            handleDeleteGame={handleDeleteGame}
           />
         </div>
       </div>
