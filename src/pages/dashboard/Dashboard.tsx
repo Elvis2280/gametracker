@@ -29,6 +29,7 @@ export default function Dashboard() {
     formikEditGame,
     handleSaveGame,
     handleDeleteGame,
+    handleGameSearch,
   } = useGameData();
 
   const { value: addModalBool, toggleValue: toggleAddModalValue } = useToggle();
@@ -58,8 +59,15 @@ export default function Dashboard() {
             color="primary"
             size="sm"
             placeholder="Search your game"
+            onInputChange={(value) => handleGameSearch(value)}
           >
-            <AutocompleteItem key="Brotato">Brotato</AutocompleteItem>
+            {games?.data?.map((game: gameListResponseDto) => {
+              return (
+                <AutocompleteItem key={game.id} value={game.id}>
+                  {game.game_title}
+                </AutocompleteItem>
+              );
+            }) ?? []}
           </Autocomplete>
           <Button
             className=" text-xl"

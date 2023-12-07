@@ -2,13 +2,19 @@ import { Key, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { PostgrestError } from '@supabase/supabase-js';
 import { gameListResponseDto } from '../../../types/responses/gameResponseDto';
-import { deleteGame, getAllGames, saveGame } from '../utils/gamesService';
+import {
+  deleteGame,
+  getAllGames,
+  saveGame,
+  searchGameByTitle,
+} from '../utils/gamesService';
 import useSession from '../../../hooks/session/useSession';
 import { gameFieldsTypes } from '../../../types/general/general';
 import { tabStatus } from '../../../utils/constants';
 import { yupResolver } from '@hookform/resolvers/yup';
 import addGameSchema from '../schema';
 import { useForm } from 'react-hook-form';
+import { useDebouncedCallback } from 'use-debounce';
 
 type gamesType = {
   data: gameListResponseDto[] | null;
@@ -28,6 +34,9 @@ export default function useGameData() {
   });
   const { session } = useSession();
   const [isSaving, setIsSaving] = useState(false); // for save game button
+  const handleGameSearch = useDebouncedCallback((gameName: string) => {
+    searchGames(gameName);
+  }, 1000); // debounce search
 
   const getAllGamesData = async (status: Key = tabStatus.active) => {
     const allGames = await getAllGames({
@@ -38,6 +47,16 @@ export default function useGameData() {
     });
     setGames(allGames);
   }; // fetch on demand with query params
+
+  const searchGames = async (query: string) => {
+    if (!query) return getAllGamesData();
+
+    const searchedGames = await searchGameByTitle(
+      query,
+      session?.user?.id ?? '',
+    );
+    setGames(searchedGames);
+  };
 
   const getGamesCount = async () => {
     const actives = await getAllGames({
@@ -143,6 +162,7 @@ export default function useGameData() {
     tabsCount,
     handleSetSelectedGame,
     handleDeleteGame,
+    handleGameSearch,
     formikEditGame: {
       register,
       handleSubmit,

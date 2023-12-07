@@ -41,6 +41,18 @@ export const saveGame = async (game: gameFieldsTypes, userId: string) => {
   return gameSaved;
 };
 
+export const searchGameByTitle = async (title: string, userId: string) => {
+  if (!title || !userId) throw new Error('Title and user id are required');
+
+  const game = await supabase
+    .from('game')
+    .select('*')
+    .filter('user_id', 'eq', userId)
+    .ilike('game_title', `%${title}%`);
+
+  return game;
+};
+
 export const deleteGame = async (gameId: number) => {
   if (!gameId) throw new Error('Game id is required');
 
