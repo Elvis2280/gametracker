@@ -1,7 +1,7 @@
 import { Key } from 'react';
-import { gameFieldsTypes } from '../../../types/general/general';
-import { gameStatus, tabStatus } from '../../../utils/constants';
-import supabase from '../../../utils/databaseClient';
+import { gameFieldsTypes } from '@/types/general/general';
+import { gameStatus, tabStatus } from '@/utils/constants';
+import supabase from '@/utils/databaseClient';
 
 type gamesQueryParams = {
   userId: string;
@@ -36,6 +36,7 @@ export const saveGame = async (game: gameFieldsTypes, userId: string) => {
 
   const gameSaved = await supabase
     .from('game')
+    // eslint-disable-next-line camelcase
     .insert({ ...game, user_id: userId });
 
   return gameSaved;

@@ -1,10 +1,11 @@
 import { Button, Input } from '@nextui-org/react';
-import useToggle from '../../hooks/useToggle/useToggle';
+import useToggle from '@/hooks/useToggle/useToggle';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useForm } from 'react-hook-form';
 import loginSchema from './schema';
 import { yupResolver } from '@hookform/resolvers/yup';
-import useSession from '../../hooks/session/useSession';
+import useSession from '@/hooks/session/useSession';
+import { toast } from 'react-toastify';
 
 type LoginData = {
   email: string;
@@ -27,11 +28,18 @@ export default function Login() {
   });
 
   const onSubmit = (data: LoginData) => {
-    loginHandler(data.email, data.password);
+    loginHandler(data.email, data.password).catch(() =>
+      toast.error('Error al iniciar sesión')
+    );
   };
   return (
     <div className="relative max-h-[100dvh] h-[100dvh]">
-      <form className=" h-full" onSubmit={handleSubmit(onSubmit)}>
+      <form
+        className=" h-full"
+        onSubmit={() => {
+          handleSubmit(onSubmit);
+        }}
+      >
         <div className="h-full p-4 flex flex-col justify-between ">
           <h1 className=" text-xl font-bold text-center">GameTracker</h1>
           <div className=" flex flex-col gap-y-4">

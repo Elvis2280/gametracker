@@ -9,15 +9,16 @@ import {
   Spinner,
 } from '@nextui-org/react';
 import { FiFilter } from 'react-icons/fi';
-import GameCard from '../../components/gameCard/GameCard';
-import useSession from '../../hooks/session/useSession';
+import GameCard from '@/components/gameCard/GameCard';
+import useSession from '@/hooks/session/useSession';
 import useGameData from './hooks/useGameData';
-import { gameListResponseDto } from '../../types/responses/gameResponseDto';
+import { gameListResponseDto } from '@/types/responses/gameResponseDto';
 import { getAvatarLetter } from './utils/gamesService';
 import ModalAddGame from './components/modalAddGame/ModalAddGame';
-import useToggle from '../../hooks/useToggle/useToggle';
+import useToggle from '@/hooks/useToggle/useToggle';
 import TabsGames from './components/TabsGames';
 import ModalEditGame from './components/ModalEditGame';
+import { toast } from 'react-toastify';
 
 export default function Dashboard() {
   const { session, logoutHandler } = useSession();
@@ -46,7 +47,15 @@ export default function Dashboard() {
               <Avatar name={getAvatarLetter(session?.user?.email ?? '')} />
             </PopoverTrigger>
             <PopoverContent>
-              <Button onClick={logoutHandler} size="sm" variant="light">
+              <Button
+                onClick={() => {
+                  logoutHandler().catch(() =>
+                    toast.error('Error al cerrar sesión')
+                  );
+                }}
+                size="sm"
+                variant="light"
+              >
                 Log out
               </Button>
             </PopoverContent>
@@ -59,7 +68,11 @@ export default function Dashboard() {
             color="primary"
             size="sm"
             placeholder="Search your game"
-            onInputChange={(value) => handleGameSearch(value)}
+            onInputChange={(value) => {
+              handleGameSearch(value)?.catch(() =>
+                toast.error(`Error al buscar ${value}`)
+              );
+            }}
           >
             {games?.data?.map((game: gameListResponseDto) => {
               return (
@@ -81,7 +94,11 @@ export default function Dashboard() {
 
         <div className="mt-6 flex flex-col gap-y-3">
           <TabsGames
-            onChangeTab={getAllGamesData}
+            onChangeTab={() => {
+              getAllGamesData().catch(() =>
+                toast.error('Error al cargar los juegos')
+              );
+            }}
             activeCount={tabsCount.active}
             completedCount={tabsCount.completed}
           />
@@ -120,13 +137,19 @@ export default function Dashboard() {
             handleSaveGame={handleSaveGame}
             isActived={addModalBool}
             handleModal={toggleAddModalValue}
-            reloadGames={getAllGamesData}
+            reloadGames={() => {
+              getAllGamesData().catch(() =>
+                toast.error('Error al cargar los juegos')
+              );
+            }}
           />
           <ModalEditGame
             isActived={editModalBool}
             handleModal={toggleEditModalValue}
             formikEditGame={formikEditGame}
-            handleDeleteGame={handleDeleteGame}
+            handleDeleteGame={() => {
+              handleDeleteGame().catch(() => toast.error('Error al eliminar'));
+            }}
           />
         </div>
       </div>

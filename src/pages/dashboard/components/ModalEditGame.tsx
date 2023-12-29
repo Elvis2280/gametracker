@@ -10,22 +10,17 @@ import {
   SelectItem,
   Textarea,
 } from '@nextui-org/react';
-import { gameGenres, platformList, statusList } from '../../../utils/constants';
+import { gameGenres, platformList, statusList } from '@/utils/constants';
 import { FaRegTrashAlt } from 'react-icons/fa';
-import useToggle from '../../../hooks/useToggle/useToggle';
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import useToggle from '@/hooks/useToggle/useToggle';
+import { formikGameFieldsTypes } from '@/types/hooks/typeUseApiGame';
+import { statusTypes } from '@/types/general/general';
 
 type Props = {
   isActived: boolean;
   handleModal: () => void;
   handleDeleteGame: () => void;
-  formikEditGame: {
-    register: any;
-    handleSubmit: any;
-    errors: any;
-    setValue: any;
-    getValues: any;
-  };
+  formikEditGame: formikGameFieldsTypes;
 };
 
 export default function ModalEditGame({
@@ -55,23 +50,25 @@ export default function ModalEditGame({
               <div className=" flex flex-col gap-y-3">
                 <Input
                   label="Title"
-                  isInvalid={Boolean(formikEditGame.errors.game_title)}
-                  errorMessage={formikEditGame.errors.game_title?.message}
-                  defaultValue={formikEditGame.getValues().game_title}
-                  {...formikEditGame.register('game_title')}
+                  isInvalid={Boolean(formikEditGame.errors.gameTitle)}
+                  errorMessage={formikEditGame.errors.gameTitle?.message}
+                  defaultValue={formikEditGame.getValues().gameTitle}
+                  {...formikEditGame.register('gameTitle')}
                 />
                 <Textarea
                   label="Description"
-                  isInvalid={Boolean(formikEditGame.errors.game_description)}
-                  errorMessage={formikEditGame.errors.game_description?.message}
-                  defaultValue={formikEditGame.getValues().game_description}
-                  {...formikEditGame.register('game_description')}
+                  isInvalid={Boolean(formikEditGame.errors.gameDescription)}
+                  errorMessage={formikEditGame.errors.gameDescription?.message}
+                  defaultValue={formikEditGame.getValues().gameDescription}
+                  {...formikEditGame.register('gameDescription')}
                 />
                 <Select
                   label="Status"
                   isInvalid={Boolean(formikEditGame.errors.status)}
                   errorMessage={formikEditGame.errors.status?.message}
-                  defaultSelectedKeys={[formikEditGame.getValues().status]}
+                  defaultSelectedKeys={
+                    [formikEditGame.getValues().status] as statusTypes[]
+                  }
                   {...formikEditGame.register('status')}
                 >
                   {statusList.map((status) => {

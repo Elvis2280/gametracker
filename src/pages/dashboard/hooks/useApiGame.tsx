@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import {
   gamesApiDto,
   gamesApiResponseDto,
-} from '../../../types/responses/gameResponseDto';
+} from '@/types/responses/gameResponseDto';
 import addGameSchema from '../schema';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -37,7 +37,7 @@ export default function useApiGame() {
       onSuccess: (data: gamesApiResponseDto) => {
         setSearchGamesData(data);
       },
-    },
+    }
   ); // fetch on demand with query params
 
   const debounceSearch = useDebouncedCallback((gameName: string) => {
@@ -61,20 +61,20 @@ export default function useApiGame() {
     setValue,
   } = useForm({
     defaultValues: {
-      game_title: selectedGame?.name ?? '',
-      game_description: '',
+      gameTitle: selectedGame?.name ?? '',
+      gameDescription: '',
       status: '',
       genres: '',
       platforms: '',
-      game_picture: selectedGame?.background_image ?? '',
+      gamePicture: selectedGame?.background_image ?? '',
     },
     resolver: yupResolver(addGameSchema),
   });
 
   useEffect(() => {
     if (selectedGame) {
-      setValue('game_title', selectedGame?.name ?? '');
-      setValue('game_picture', selectedGame?.background_image ?? '');
+      setValue('gameTitle', selectedGame?.name ?? '');
+      setValue('gamePicture', selectedGame?.background_image ?? '');
     }
   }, [selectedGame]);
 

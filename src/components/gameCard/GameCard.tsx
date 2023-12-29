@@ -8,7 +8,7 @@ import {
 } from '@nextui-org/react';
 import PlatformIcon from '../platformIcon/PlatformIcon';
 import { TbPencil } from 'react-icons/tb';
-import { statusColor } from '../../utils/constants';
+import { statusColor } from '@/utils/constants';
 import {
   genresTypes,
   platformsTypes,

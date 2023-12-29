@@ -26,10 +26,10 @@ export type genresTypes =
 export type statusTypes = 'Not started' | 'In progress' | 'Completed';
 
 export type gameFieldsTypes = {
-  game_title: string;
-  game_description: string;
+  gameTitle: string;
+  gameDescription: string;
   status: statusTypes;
   platforms: platformsTypes[];
   genres: genresTypes[];
-  game_picture: string;
+  gamePicture: string;
 };
