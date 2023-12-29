@@ -13,6 +13,9 @@ module.exports = {
     '.eslintrc.cjs',
     'postcss.config.js',
     'vite.config.ts',
+    'playwright.config.ts',
+    'tailwind.config.js',
+    'tests-examples/**/*',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -36,5 +39,10 @@ module.exports = {
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
     'prettier/prettier': 'error',
+    'react/jsx-uses-react': 'off',
+    'react/jsx-uses-vars': 'off',
+    camelcase: 'error',
+    '@typescript-eslint/no-unused-vars': 'error',
+    'react/react-in-jsx-scope': 'off',
   },
 };

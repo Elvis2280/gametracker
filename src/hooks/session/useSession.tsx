@@ -17,7 +17,7 @@ export default function useSession() {
     if (!session) {
       const storageSession = sessionStorage.getItem('gametrackerSession');
       if (storageSession) {
-        const data = JSON.parse(storageSession);
+        const data = JSON.parse(storageSession) as UserSupa;
         setSession(data);
       }
     }
@@ -46,13 +46,12 @@ export default function useSession() {
 
   const logoutHandler = async () => {
     const { error } = await supabase.auth.signOut();
-    if (error) {
-      return toast.error('Error al cerrar sesión');
-    }
 
-    setSession(null);
-    sessionStorage.removeItem('gametrackerSession');
-    toast.success('Hasta luego!');
+    if (!error) {
+      setSession(null);
+      sessionStorage.removeItem('gametrackerSession');
+      toast.success('Hasta luego!');
+    }
   };
 
   return { session, loginHandler, logoutHandler };

@@ -22,7 +22,7 @@ type gamesType = {
 };
 
 export type saveGameFunctionType = {
-  (data: gameFieldsTypes, onSuccess?: () => void): void;
+  (data: gameFieldsTypes, onSuccess?: () => void): Promise<void>;
 };
 
 export default function useGameData() {
@@ -34,8 +34,8 @@ export default function useGameData() {
   });
   const { session } = useSession();
   const [isSaving, setIsSaving] = useState(false); // for save game button
-  const handleGameSearch = useDebouncedCallback((gameName: string) => {
-    searchGames(gameName);
+  const handleGameSearch = useDebouncedCallback(async (gameName: string) => {
+    await searchGames(gameName);
   }, 1000); // debounce search
 
   const getAllGamesData = async (status: Key = tabStatus.active) => {
@@ -83,7 +83,7 @@ export default function useGameData() {
       setIsSaving(false);
       toast.error('Error al guardar el juego');
     } else {
-      getAllGamesData();
+      await getAllGamesData();
       toast.success('Juego guardado correctamente');
       onSuccess && onSuccess();
       setIsSaving(false);
@@ -98,7 +98,7 @@ export default function useGameData() {
     if (deletedGame.error) {
       toast.error('Error al eliminar el juego');
     } else {
-      getAllGamesData();
+      await getAllGamesData();
       toast.success('Juego eliminado correctamente');
       setSelectedGameId(null);
     }
@@ -111,12 +111,12 @@ export default function useGameData() {
 
     if (game) {
       setSelectedGameId(game.id);
-      setValue('game_title', game.game_title);
-      setValue('game_description', game.game_description);
+      setValue('gameTitle', game.game_title);
+      setValue('gameDescription', game.game_description);
       setValue('status', game.status);
       setValue('genres', game.genres.toString());
       setValue('platforms', game.platforms.toString());
-      setValue('game_picture', game.game_picture);
+      setValue('gamePicture', game.game_picture);
     } else {
       setSelectedGameId(null);
     }
@@ -130,30 +130,24 @@ export default function useGameData() {
     getValues,
   } = useForm({
     defaultValues: {
-      game_title: '',
-      game_description: '',
+      gameTitle: '',
+      gameDescription: '',
       status: '',
       genres: '',
       platforms: '',
-      game_picture: '',
+      gamePicture: '',
     },
     resolver: yupResolver(addGameSchema),
   });
 
   useEffect(() => {
-    getAllGamesData();
-    getGamesCount();
+    getAllGamesData().catch(() => toast.error('Error al cargar los juegos'));
+    getGamesCount().catch(() => toast.error('Error al cargar los juegos'));
   }, []); // fetch all games on mount
 
   useEffect(() => {
-    getGamesCount();
+    getGamesCount().catch(() => toast.error('Error al cargar los juegos'));
   }, [games]); // update tabs count when new game is added
-
-  useEffect(() => {
-    if (games?.error) {
-      toast.error('Error al cargar los juegos');
-    }
-  }, [games?.error?.message]); // show error if exists
 
   return {
     games,

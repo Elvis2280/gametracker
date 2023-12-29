@@ -14,31 +14,21 @@ import {
 } from '@nextui-org/react';
 import { IoGameControllerOutline } from 'react-icons/io5';
 import useApiGame from '../../hooks/useApiGame';
-import {
-  gamesApiDto,
-  gamesApiResponseDto,
-} from '@/types/responses/gameResponseDto';
 import { gameGenres, platformList, statusList } from '@/utils/constants';
 import { saveGameFunctionType } from '../../hooks/useGameData';
+import {
+  genresTypes,
+  platformsTypes,
+  statusTypes,
+} from '@/types/general/general';
+import { gameFields, typeUseApiGame } from '@/types/hooks/typeUseApiGame';
+import { toast } from 'react-toastify';
 
 type Props = {
   isActived: boolean;
   handleModal: () => void;
   reloadGames: () => void;
   handleSaveGame: saveGameFunctionType;
-};
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-type apiGameHook = {
-  debounceSearch: (query: string) => void;
-  isSearchFetching: boolean;
-  searchGamesData: gamesApiResponseDto | undefined;
-  handleSelectGame: (gameId: number) => void;
-  selectedGame: gamesApiDto | null;
-  register: any;
-  handleSubmit: any;
-  errors: any;
-  resetGameSelection: () => void;
 };
 
 export default function ModalAddGame({
@@ -57,27 +47,31 @@ export default function ModalAddGame({
     handleSubmit,
     errors,
     resetGameSelection,
-  }: apiGameHook = useApiGame();
+  }: typeUseApiGame = useApiGame();
 
   return (
     <div>
       <Modal backdrop="blur" isOpen={isActived} onClose={handleModal}>
         <ModalContent>
           <form
-            onSubmit={handleSubmit((e: any) => {
-              handleSaveGame(
-                {
-                  ...e,
-                  platforms: e.platforms.split(','),
-                  genres: e.genres.split(','),
-                },
-                () => {
-                  reloadGames();
-                  handleModal();
-                  resetGameSelection();
-                }
-              );
-            })}
+            onSubmit={() => {
+              handleSubmit((e: gameFields) => {
+                handleSaveGame(
+                  {
+                    ...e,
+                    platforms: e.platforms.split(',') as platformsTypes[],
+                    genres: e.genres.split(',') as genresTypes[],
+                    gameDescription: e.gameDescription ?? '',
+                    status: (e.status as statusTypes) ?? '',
+                  },
+                  () => {
+                    reloadGames();
+                    handleModal();
+                    resetGameSelection();
+                  }
+                ).catch(() => toast.error('Error al guardar el juego'));
+              });
+            }}
           >
             <ModalHeader>Add Game</ModalHeader>
             <ModalBody>
@@ -91,8 +85,8 @@ export default function ModalAddGame({
                   onSelectionChange={(gameSelectedId) =>
                     handleSelectGame(Number(gameSelectedId))
                   }
-                  isInvalid={Boolean(errors.image)}
-                  errorMessage={errors.image?.message}
+                  isInvalid={Boolean(errors.gamePicture)}
+                  errorMessage={errors.gamePicture?.message}
                   value={selectedGame?.id ?? ''}
                 >
                   {(searchGamesData?.results ?? []).map((game) => {
@@ -107,15 +101,15 @@ export default function ModalAddGame({
                   disabled
                   label="Title"
                   value={selectedGame?.name ?? ''}
-                  isInvalid={Boolean(errors.title)}
-                  errorMessage={errors.title?.message}
-                  {...register('game_title')}
+                  isInvalid={Boolean(errors.gameTitle)}
+                  errorMessage={errors.gameTitle?.message}
+                  {...register('gameTitle')}
                 />
                 <Textarea
                   label="Description"
-                  isInvalid={Boolean(errors.description)}
-                  errorMessage={errors.description?.message}
-                  {...register('game_description')}
+                  isInvalid={Boolean(errors.gameDescription)}
+                  errorMessage={errors.gameDescription?.message}
+                  {...register('gameDescription')}
                 />
                 <Select
                   label="Status"
@@ -132,8 +126,8 @@ export default function ModalAddGame({
                   })}
                 </Select>
                 <Select
-                  isInvalid={Boolean(errors.categories)}
-                  errorMessage={errors.categories?.message}
+                  isInvalid={Boolean(errors.genres)}
+                  errorMessage={errors.genres?.message}
                   selectionMode="multiple"
                   label="Categories"
                   {...register('genres')}
@@ -150,8 +144,8 @@ export default function ModalAddGame({
                   selectionMode="multiple"
                   label="Platform"
                   size="sm"
-                  isInvalid={Boolean(errors.platform)}
-                  errorMessage={errors.platform?.message}
+                  isInvalid={Boolean(errors.platforms)}
+                  errorMessage={errors.platforms?.message}
                   {...register('platforms')}
                 >
                   {platformList.map((plaform) => {
