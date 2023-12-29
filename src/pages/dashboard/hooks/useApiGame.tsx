@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import {
   gamesApiDto,
   gamesApiResponseDto,
-} from '../../../types/responses/gameResponseDto';
+} from '@/types/responses/gameResponseDto';
 import addGameSchema from '../schema';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -37,7 +37,7 @@ export default function useApiGame() {
       onSuccess: (data: gamesApiResponseDto) => {
         setSearchGamesData(data);
       },
-    },
+    }
   ); // fetch on demand with query params
 
   const debounceSearch = useDebouncedCallback((gameName: string) => {

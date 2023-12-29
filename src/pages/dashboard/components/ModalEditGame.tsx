@@ -10,9 +10,9 @@ import {
   SelectItem,
   Textarea,
 } from '@nextui-org/react';
-import { gameGenres, platformList, statusList } from '../../../utils/constants';
+import { gameGenres, platformList, statusList } from '@/utils/constants';
 import { FaRegTrashAlt } from 'react-icons/fa';
-import useToggle from '../../../hooks/useToggle/useToggle';
+import useToggle from '@/hooks/useToggle/useToggle';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 type Props = {

@@ -1,10 +1,10 @@
 import { Button, Input } from '@nextui-org/react';
-import useToggle from '../../hooks/useToggle/useToggle';
+import useToggle from '@/hooks/useToggle/useToggle';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useForm } from 'react-hook-form';
 import loginSchema from './schema';
 import { yupResolver } from '@hookform/resolvers/yup';
-import useSession from '../../hooks/session/useSession';
+import useSession from '@/hooks/session/useSession';
 
 type LoginData = {
   email: string;

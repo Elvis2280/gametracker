@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import supabase from '../../utils/databaseClient';
+import supabase from '@/utils/databaseClient';
 import { Session, User } from '@supabase/supabase-js';
 import { toast } from 'react-toastify';
 

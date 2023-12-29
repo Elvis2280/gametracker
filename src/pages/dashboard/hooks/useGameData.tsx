@@ -1,16 +1,16 @@
 import { Key, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { PostgrestError } from '@supabase/supabase-js';
-import { gameListResponseDto } from '../../../types/responses/gameResponseDto';
+import { gameListResponseDto } from '@/types/responses/gameResponseDto';
 import {
   deleteGame,
   getAllGames,
   saveGame,
   searchGameByTitle,
 } from '../utils/gamesService';
-import useSession from '../../../hooks/session/useSession';
-import { gameFieldsTypes } from '../../../types/general/general';
-import { tabStatus } from '../../../utils/constants';
+import useSession from '@/hooks/session/useSession';
+import { gameFieldsTypes } from '@/types/general/general';
+import { tabStatus } from '@/utils/constants';
 import { yupResolver } from '@hookform/resolvers/yup';
 import addGameSchema from '../schema';
 import { useForm } from 'react-hook-form';
@@ -53,7 +53,7 @@ export default function useGameData() {
 
     const searchedGames = await searchGameByTitle(
       query,
-      session?.user?.id ?? '',
+      session?.user?.id ?? ''
     );
     setGames(searchedGames);
   };
@@ -106,7 +106,7 @@ export default function useGameData() {
 
   const handleSetSelectedGame = (id: number | null) => {
     const game = games?.data?.find(
-      (game: gameListResponseDto) => game.id === id,
+      (game: gameListResponseDto) => game.id === id
     );
 
     if (game) {

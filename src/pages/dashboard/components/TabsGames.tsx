@@ -1,5 +1,5 @@
 import { Tab, Tabs } from '@nextui-org/react';
-import { tabStatus } from '../../../utils/constants';
+import { tabStatus } from '@/utils/constants';
 import { Key } from 'react';
 
 type Props = {

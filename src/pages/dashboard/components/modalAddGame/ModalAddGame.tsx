@@ -17,12 +17,8 @@ import useApiGame from '../../hooks/useApiGame';
 import {
   gamesApiDto,
   gamesApiResponseDto,
-} from '../../../../types/responses/gameResponseDto';
-import {
-  gameGenres,
-  platformList,
-  statusList,
-} from '../../../../utils/constants';
+} from '@/types/responses/gameResponseDto';
+import { gameGenres, platformList, statusList } from '@/utils/constants';
 import { saveGameFunctionType } from '../../hooks/useGameData';
 
 type Props = {
@@ -79,7 +75,7 @@ export default function ModalAddGame({
                   reloadGames();
                   handleModal();
                   resetGameSelection();
-                },
+                }
               );
             })}
           >

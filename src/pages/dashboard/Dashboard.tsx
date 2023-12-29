@@ -9,13 +9,13 @@ import {
   Spinner,
 } from '@nextui-org/react';
 import { FiFilter } from 'react-icons/fi';
-import GameCard from '../../components/gameCard/GameCard';
-import useSession from '../../hooks/session/useSession';
+import GameCard from '@/components/gameCard/GameCard';
+import useSession from '@/hooks/session/useSession';
 import useGameData from './hooks/useGameData';
-import { gameListResponseDto } from '../../types/responses/gameResponseDto';
+import { gameListResponseDto } from '@/types/responses/gameResponseDto';
 import { getAvatarLetter } from './utils/gamesService';
 import ModalAddGame from './components/modalAddGame/ModalAddGame';
-import useToggle from '../../hooks/useToggle/useToggle';
+import useToggle from '@/hooks/useToggle/useToggle';
 import TabsGames from './components/TabsGames';
 import ModalEditGame from './components/ModalEditGame';
 
