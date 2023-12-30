@@ -4,4 +4,8 @@ const loginSchema = yup.object().shape({
   password: yup.string().min(6).required(),
 });
 
+export const resetPasswordSchema = yup.object().shape({
+  resetEmail: yup.string().email().required(),
+});
+
 export default loginSchema;

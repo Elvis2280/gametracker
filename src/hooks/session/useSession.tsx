@@ -54,5 +54,22 @@ export default function useSession() {
     }
   };
 
-  return { session, loginHandler, logoutHandler };
+  const resetPasswordHandler = async (email: string) => {
+    console.log(window.location.origin);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    if (error) {
+      toast.error('We could not find a user with that email');
+    } else {
+      toast.success('Check your email for the password reset link');
+    }
+  };
+
+  return {
+    session,
+    loginHandler,
+    logoutHandler,
+    resetPasswordHandler,
+  };
 }
