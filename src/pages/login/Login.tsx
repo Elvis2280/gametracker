@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { Button, Input } from '@nextui-org/react';
 import useToggle from '@/hooks/useToggle/useToggle';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
@@ -6,6 +7,7 @@ import loginSchema from './schema';
 import { yupResolver } from '@hookform/resolvers/yup';
 import useSession from '@/hooks/session/useSession';
 import { toast } from 'react-toastify';
+import ResetPasswordModal from './components/resetPasswordModal.tsx/ResetPasswordModal';
 
 type LoginData = {
   email: string;
@@ -14,6 +16,7 @@ type LoginData = {
 
 export default function Login() {
   const { value, toggleValue } = useToggle();
+  const { value: resetToggle, toggleValue: toggleReset } = useToggle();
   const { loginHandler } = useSession();
   const {
     register,
@@ -34,12 +37,7 @@ export default function Login() {
   };
   return (
     <div className="relative max-h-[100dvh] h-[100dvh]">
-      <form
-        className=" h-full"
-        onSubmit={() => {
-          handleSubmit(onSubmit);
-        }}
-      >
+      <form className=" h-full" onSubmit={handleSubmit(onSubmit)}>
         <div className="h-full p-4 flex flex-col justify-between ">
           <h1 className=" text-xl font-bold text-center">GameTracker</h1>
           <div className=" flex flex-col gap-y-4">
@@ -81,13 +79,22 @@ export default function Login() {
               />
             </div>
           </div>
-          <div className=" pb-10">
+          <div className=" flex flex-col gap-y-4 pb-10">
             <Button type="submit" variant="solid" color="primary" fullWidth>
               Login
+            </Button>
+            <Button
+              onClick={toggleReset}
+              variant="light"
+              color="primary"
+              fullWidth
+            >
+              Reset Password
             </Button>
           </div>
         </div>
       </form>
+      <ResetPasswordModal resetToggle={resetToggle} toggleReset={toggleReset} />
     </div>
   );
 }
