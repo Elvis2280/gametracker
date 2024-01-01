@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import supabase from '@/utils/databaseClient';
 import { Session, User } from '@supabase/supabase-js';
@@ -23,25 +23,24 @@ export default function useSession() {
     }
   }, [session]);
 
-  useEffect(() => {
-    if (session) {
-      navegate('/');
-    } else {
-      navegate('/login');
-    }
-  }, [session]);
-
   const loginHandler = async (email: string, password: string) => {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
+    navegate('/');
     if (error) {
       return toast.error('Error al iniciar sesión');
     }
 
     setSession(data);
     sessionStorage.setItem('gametrackerSession', JSON.stringify(data));
+  };
+
+  const checkSession = () => {
+    if (!session) {
+      navegate('/login');
+    }
   };
 
   const logoutHandler = async () => {
@@ -51,11 +50,11 @@ export default function useSession() {
       setSession(null);
       sessionStorage.removeItem('gametrackerSession');
       toast.success('Hasta luego!');
+      navegate('/login');
     }
   };
 
   const resetPasswordHandler = async (email: string) => {
-    console.log(window.location.origin);
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`,
     });
@@ -66,10 +65,24 @@ export default function useSession() {
     }
   };
 
+  const changePasswordHandler = async (password: string) => {
+    try {
+      const { error } = await supabase.auth.updateUser({ password });
+      if (error)
+        throw new Error('Something went wrong, please try again later');
+      navegate('/login');
+      toast.success('Password changed successfully');
+    } catch (error) {
+      throw new Error('Something went wrong, please try again later');
+    }
+  };
+
   return {
     session,
     loginHandler,
     logoutHandler,
     resetPasswordHandler,
+    changePasswordHandler,
+    checkSession,
   };
 }

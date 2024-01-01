@@ -95,9 +95,9 @@ export default function Dashboard() {
         <div className="mt-6 flex flex-col gap-y-3">
           <TabsGames
             onChangeTab={() => {
-              getAllGamesData().catch(() =>
-                toast.error('Error al cargar los juegos')
-              );
+              getAllGamesData().catch(() => {
+                toast.error('We could not get the games');
+              });
             }}
             activeCount={tabsCount.active}
             completedCount={tabsCount.completed}
@@ -138,9 +138,7 @@ export default function Dashboard() {
             isActived={addModalBool}
             handleModal={toggleAddModalValue}
             reloadGames={() => {
-              getAllGamesData().catch(() =>
-                toast.error('Error al cargar los juegos')
-              );
+              getAllGamesData().catch(() => {});
             }}
           />
           <ModalEditGame

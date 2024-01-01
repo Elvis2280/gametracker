@@ -26,6 +26,7 @@ export type saveGameFunctionType = {
 };
 
 export default function useGameData() {
+  const { checkSession } = useSession();
   const [games, setGames] = useState<gamesType | null>(null);
   const [selectedGameId, setSelectedGameId] = useState<number | null>(null); // for delete game
   const [tabsCount, setTabsCount] = useState({
@@ -39,13 +40,17 @@ export default function useGameData() {
   }, 1000); // debounce search
 
   const getAllGamesData = async (status: Key = tabStatus.active) => {
-    const allGames = await getAllGames({
-      userId: session?.user?.id ?? '',
-      query: {
-        status,
-      },
-    });
-    setGames(allGames);
+    try {
+      const allGames = await getAllGames({
+        userId: session?.user?.id ?? '',
+        query: {
+          status,
+        },
+      });
+      setGames(allGames);
+    } catch (error) {
+      throw new Error('We could not fetch the games');
+    }
   }; // fetch on demand with query params
 
   const searchGames = async (query: string) => {
@@ -141,12 +146,13 @@ export default function useGameData() {
   });
 
   useEffect(() => {
-    getAllGamesData().catch(() => toast.error('Error al cargar los juegos'));
-    getGamesCount().catch(() => toast.error('Error al cargar los juegos'));
+    checkSession();
+    getAllGamesData().catch(() => {});
+    getGamesCount().catch(() => {});
   }, []); // fetch all games on mount
 
   useEffect(() => {
-    getGamesCount().catch(() => toast.error('Error al cargar los juegos'));
+    getGamesCount().catch(() => {});
   }, [games]); // update tabs count when new game is added
 
   return {
