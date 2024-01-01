@@ -33,3 +33,8 @@ export type gameFieldsTypes = {
   genres: genresTypes[];
   gamePicture: string;
 };
+
+export type resetPasswordTypes = {
+  password: string;
+  confirmPassword: string;
+};
