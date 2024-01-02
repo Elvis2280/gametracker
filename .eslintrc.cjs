@@ -44,5 +44,6 @@ module.exports = {
     camelcase: 'error',
     '@typescript-eslint/no-unused-vars': 'error',
     'react/react-in-jsx-scope': 'off',
+    '@typescript-eslint/no-misused-promises': 'error',
   },
 };
