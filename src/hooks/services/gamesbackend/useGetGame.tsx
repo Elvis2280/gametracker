@@ -1,7 +1,6 @@
 import {
   QueryObserverResult,
   RefetchOptions,
-  useMutation,
   useQuery,
 } from '@tanstack/react-query';
 import { backendApi } from '@/utils/axiosInstances';

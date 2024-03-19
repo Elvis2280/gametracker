@@ -11,7 +11,6 @@ import {
 import { useForm } from 'react-hook-form';
 import { resetPasswordSchema } from '../../schema';
 import { yupResolver } from '@hookform/resolvers/yup';
-import useSession from '@/hooks/session/useSession';
 
 type Props = {
   resetToggle: boolean;
@@ -26,7 +25,7 @@ export default function ResetPasswordModal({
   toggleReset,
   resetToggle,
 }: Props) {
-  const { resetPasswordHandler } = useSession();
+  // const { resetPasswordHandler } = useSession();
   const {
     register,
     handleSubmit,
@@ -39,9 +38,10 @@ export default function ResetPasswordModal({
   });
 
   const onSubmit = (data: ResetPasswordData) => {
-    resetPasswordHandler(data.resetEmail)
-      .catch(() => console.log('try again'))
-      .finally(() => toggleReset());
+    // resetPasswordHandler(data.resetEmail)
+    //   .catch(() => console.log('try again'))
+    //   .finally(() => toggleReset());
+    console.log(data);
   };
 
   return (
