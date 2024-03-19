@@ -4,10 +4,9 @@ import { Button, Input } from '@nextui-org/react';
 import { useForm } from 'react-hook-form';
 import resetPasswordSchema from './schema';
 import { resetPasswordTypes } from '@/types/general/general';
-import useSession from '@/hooks/session/useSession';
 
 export default function ResetPassword() {
-  const { changePasswordHandler } = useSession();
+  // const { changePasswordHandler } = useSession();
   const {
     register,
     handleSubmit,
@@ -21,7 +20,8 @@ export default function ResetPassword() {
   });
 
   const onSubmit = async (data: resetPasswordTypes) => {
-    await changePasswordHandler(data.password);
+    // await changePasswordHandler(data.password);
+    console.log(data);
   };
   return (
     <form
