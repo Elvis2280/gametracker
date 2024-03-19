@@ -79,8 +79,6 @@ export default function ModalAddGame({
     setValue('score', selectedGame?.metacritic ?? 0);
   }, [selectedGame]);
 
-  console.log(errors)
-
   return (
     <div>
       <Modal backdrop="blur" isOpen={isActived} onClose={handleModal}>

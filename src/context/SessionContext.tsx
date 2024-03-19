@@ -31,8 +31,6 @@ export const SessionContext = ({ children }: Props): ReactElement => {
         exp: number;
       }>(token);
 
-      console.log(tokenDecoded)
-
       if (tokenDecoded.exp < Date.now() / 1000) {
         localStorage.removeItem('token');
         return;

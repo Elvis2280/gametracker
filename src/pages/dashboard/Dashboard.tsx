@@ -53,10 +53,6 @@ export default function Dashboard() {
     }
   }, [username]);
 
-  useEffect(() => {
-    console.log(editSelectedGame, 'editSelectedGame');
-  }, [editSelectedGame]);
-
   return (
     <div className=" min-h-screen">
       {/*logo and logout*/}
