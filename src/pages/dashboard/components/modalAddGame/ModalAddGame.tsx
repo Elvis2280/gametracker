@@ -32,7 +32,14 @@ export default function ModalAddGame({
   handleModal,
   reloadGames,
 }: Props) {
-  const { handleCreateGame } = useCreateGame(reloadGames);
+  const onSuccessfulCreate = () => {
+    handleModal();
+    resetGameSelection();
+    reset();
+    reloadGames();
+  };
+
+  const { handleCreateGame } = useCreateGame(onSuccessfulCreate);
 
   const {
     selectedGame,
@@ -48,6 +55,7 @@ export default function ModalAddGame({
     handleSubmit,
     formState: { errors },
     setValue,
+    reset,
   } = useForm({
     defaultValues: {
       name: '',
@@ -177,6 +185,7 @@ export default function ModalAddGame({
                   onClick={() => {
                     handleModal();
                     resetGameSelection();
+                    reset();
                   }}
                 >
                   Cancel

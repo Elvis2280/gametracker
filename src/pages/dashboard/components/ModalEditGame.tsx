@@ -36,8 +36,14 @@ export default function ModalEditGame({
   game,
   onSuccessfulEdit,
 }: Props) {
+  const onSuccessfulUpdate = () => {
+    onSuccessfulEdit();
+    handleModal();
+    reset();
+  };
+
   const { toggleValue, value } = useToggle();
-  const { handleUpdateGame } = useCreateGame(onSuccessfulEdit);
+  const { handleUpdateGame } = useCreateGame(onSuccessfulUpdate);
 
   const {
     register,
