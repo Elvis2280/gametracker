@@ -14,7 +14,7 @@ export const backendApi = axios.create({
   baseURL:
     enviorment === 'DEV'
       ? 'http://localhost:8080/api'
-      : (import.meta.env.VITE_SUPABASE_PROJECT_URL as string),
+      : (import.meta.env.VITE_BACKEND_URL as string),
   timeout: 10000,
   headers: {},
 });
