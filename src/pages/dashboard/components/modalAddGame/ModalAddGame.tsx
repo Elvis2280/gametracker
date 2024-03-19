@@ -13,103 +13,115 @@ import {
   Textarea,
 } from '@nextui-org/react';
 import { IoGameControllerOutline } from 'react-icons/io5';
-import useApiGame from '../../hooks/useApiGame';
 import { gameGenres, platformList, statusList } from '@/utils/constants';
-import { saveGameFunctionType } from '../../hooks/useGameData';
-import {
-  genresTypes,
-  platformsTypes,
-  statusTypes,
-} from '@/types/general/general';
-import { gameFields, typeUseApiGame } from '@/types/hooks/typeUseApiGame';
-import { toast } from 'react-toastify';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import addGameSchema from '@/pages/dashboard/schema';
+import { useCreateGame } from '@/hooks/services/gamesbackend/useCreateGame';
+import useApiGame from '@/hooks/services/gamesbackend/useApiGame';
+import { useEffect } from 'react';
 
 type Props = {
   isActived: boolean;
   handleModal: () => void;
   reloadGames: () => void;
-  handleSaveGame: saveGameFunctionType;
 };
 
 export default function ModalAddGame({
   isActived,
   handleModal,
   reloadGames,
-  handleSaveGame,
 }: Props) {
+  const { handleCreateGame } = useCreateGame(reloadGames);
+
   const {
-    debounceSearch,
-    isSearchFetching,
-    searchGamesData,
-    handleSelectGame,
     selectedGame,
+    handleSelectGame,
+    isFetching,
+    resetGameSelection,
+    handleSearchGame,
+    apiGamesData,
+  } = useApiGame();
+
+  const {
     register,
     handleSubmit,
-    errors,
-    resetGameSelection,
-  }: typeUseApiGame = useApiGame();
+    formState: { errors },
+    setValue,
+  } = useForm({
+    defaultValues: {
+      name: '',
+      description: '',
+      image: '',
+      status: '',
+      score: 0,
+      tags: '',
+      platforms: '',
+    },
+    resolver: yupResolver(addGameSchema),
+  });
+
+  const onSubmit = (data: formType) => {
+    handleCreateGame({
+      name: data.name,
+      description: data.description,
+      image: data.image,
+      status: data.status,
+      score: data.score,
+      tags: data.tags.split(','),
+      platforms: data.platforms.split(','),
+    });
+  };
+
+  useEffect(() => {
+    setValue('name', selectedGame?.name ?? '');
+    setValue('image', selectedGame?.background_image ?? '');
+    setValue('score', selectedGame?.metacritic ?? 0);
+  }, [selectedGame]);
 
   return (
     <div>
       <Modal backdrop="blur" isOpen={isActived} onClose={handleModal}>
         <ModalContent>
-          <form
-            onSubmit={() => {
-              handleSubmit((e: gameFields) => {
-                handleSaveGame(
-                  {
-                    ...e,
-                    platforms: e.platforms.split(',') as platformsTypes[],
-                    genres: e.genres.split(',') as genresTypes[],
-                    gameDescription: e.gameDescription ?? '',
-                    status: (e.status as statusTypes) ?? '',
-                  },
-                  () => {
-                    reloadGames();
-                    handleModal();
-                    resetGameSelection();
-                  }
-                ).catch(() => toast.error('Error al guardar el juego'));
-              });
-            }}
-          >
+          {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
+          <form onSubmit={handleSubmit(onSubmit)}>
             <ModalHeader>Add Game</ModalHeader>
             <ModalBody>
               <div className=" flex flex-col gap-y-3">
                 <Autocomplete
-                  disabled={isSearchFetching}
+                  disabled={isFetching}
                   startContent={<IoGameControllerOutline />}
                   label="search a game to add"
-                  onInputChange={debounceSearch}
+                  onInputChange={handleSearchGame}
                   className="mb-8"
                   onSelectionChange={(gameSelectedId) =>
                     handleSelectGame(Number(gameSelectedId))
                   }
-                  isInvalid={Boolean(errors.gamePicture)}
-                  errorMessage={errors.gamePicture?.message}
+                  isInvalid={Boolean(errors.image)}
+                  errorMessage={errors.image?.message}
                   value={selectedGame?.id ?? ''}
                 >
-                  {(searchGamesData?.results ?? []).map((game) => {
+                  {apiGamesData?.results.map((game) => {
                     return (
                       <AutocompleteItem value={game.id} key={game.id}>
                         {game.name}
                       </AutocompleteItem>
                     );
-                  })}
+                  }) ?? []}
                 </Autocomplete>
                 <Input
                   disabled
                   label="Title"
                   value={selectedGame?.name ?? ''}
-                  isInvalid={Boolean(errors.gameTitle)}
-                  errorMessage={errors.gameTitle?.message}
-                  {...register('gameTitle')}
+                  isInvalid={Boolean(errors.name)}
+                  errorMessage={errors.name?.message}
+                  {...register('name')}
                 />
                 <Textarea
                   label="Description"
-                  isInvalid={Boolean(errors.gameDescription)}
-                  errorMessage={errors.gameDescription?.message}
-                  {...register('gameDescription')}
+                  isInvalid={Boolean(errors.description)}
+                  errorMessage={errors.description?.message}
+                  {...register('description')}
                 />
                 <Select
                   label="Status"
@@ -126,11 +138,11 @@ export default function ModalAddGame({
                   })}
                 </Select>
                 <Select
-                  isInvalid={Boolean(errors.genres)}
-                  errorMessage={errors.genres?.message}
+                  isInvalid={Boolean(errors.tags)}
+                  errorMessage={errors.tags?.message}
                   selectionMode="multiple"
                   label="Categories"
-                  {...register('genres')}
+                  {...register('tags')}
                 >
                   {gameGenres.map((genre) => {
                     return (
@@ -179,4 +191,14 @@ export default function ModalAddGame({
       </Modal>
     </div>
   );
+}
+
+interface formType {
+  name: string;
+  description: string;
+  status: string;
+  tags: string;
+  platforms: string;
+  score: number;
+  image: string;
 }

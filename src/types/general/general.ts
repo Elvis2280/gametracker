@@ -7,7 +7,7 @@ export type StatusColor =
   | 'secondary'
   | undefined;
 
-export type platformsTypes = 'xbox' | 'deck';
+export type platformsTypes = 'xbox' | 'deck' | 'playstation' | 'pc';
 
 export type genresTypes =
   | 'Action'

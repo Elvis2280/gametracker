@@ -5,19 +5,19 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useForm } from 'react-hook-form';
 import loginSchema from './schema';
 import { yupResolver } from '@hookform/resolvers/yup';
-import useSession from '@/hooks/session/useSession';
-import { toast } from 'react-toastify';
 import ResetPasswordModal from './components/resetPasswordModal.tsx/ResetPasswordModal';
+import { useNavigate } from 'react-router-dom';
+import useSession from '@/hooks/session/useSession';
 
-type LoginData = {
-  email: string;
-  password: string;
-};
+// type LoginData = {
+//   email: string;
+//   password: string;
+// };
 
 export default function Login() {
   const { value, toggleValue } = useToggle();
-  const { value: resetToggle, toggleValue: toggleReset } = useToggle();
   const { loginHandler } = useSession();
+  const { value: resetToggle, toggleValue: toggleReset } = useToggle();
   const {
     register,
     handleSubmit,
@@ -30,14 +30,11 @@ export default function Login() {
     resolver: yupResolver(loginSchema),
   });
 
-  const onSubmit = (data: LoginData) => {
-    loginHandler(data.email, data.password).catch(() =>
-      toast.error('Error al iniciar sesión')
-    );
-  };
+  const navigate = useNavigate();
+
   return (
     <div className="relative max-h-[100dvh] h-[100dvh]">
-      <form className=" h-full" onSubmit={handleSubmit(onSubmit)}>
+      <form className=" h-full" onSubmit={handleSubmit(loginHandler)}>
         <div className="h-full p-4 flex flex-col justify-between ">
           <h1 className=" text-xl font-bold text-center">GameTracker</h1>
           <div className=" flex flex-col gap-y-4">
@@ -84,12 +81,14 @@ export default function Login() {
               Login
             </Button>
             <Button
-              onClick={toggleReset}
+              onClick={() => {
+                navigate('/signup');
+              }}
               variant="light"
               color="primary"
               fullWidth
             >
-              Reset Password
+              Sign Up
             </Button>
           </div>
         </div>

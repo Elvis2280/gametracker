@@ -1,6 +1,5 @@
 import {
   Autocomplete,
-  AutocompleteItem,
   Avatar,
   Button,
   Popover,
@@ -11,47 +10,63 @@ import {
 import { FiFilter } from 'react-icons/fi';
 import GameCard from '@/components/gameCard/GameCard';
 import useSession from '@/hooks/session/useSession';
-import useGameData from './hooks/useGameData';
-import { gameListResponseDto } from '@/types/responses/gameResponseDto';
-import { getAvatarLetter } from './utils/gamesService';
+import useGameData from '@/hooks/services/gamesbackend/useGetGame';
+import { GameResponseType } from '@/types/responses/gameResponseDto';
 import ModalAddGame from './components/modalAddGame/ModalAddGame';
 import useToggle from '@/hooks/useToggle/useToggle';
-import TabsGames from './components/TabsGames';
 import ModalEditGame from './components/ModalEditGame';
-import { toast } from 'react-toastify';
+import { useSessionData } from '@/context/SessionContext';
+import { ReactElement, useEffect, useState } from 'react';
+import {
+  genresTypes,
+  platformsTypes,
+  statusTypes,
+} from '@/types/general/general';
+import { useDeleteGame } from '@/hooks/services/gamesbackend/useDeleteGame';
 
 export default function Dashboard() {
-  const { session, logoutHandler } = useSession();
+  const { logOut } = useSession();
+  const { username } = useSessionData();
+  const { checkSession } = useSessionData();
   const {
-    games,
-    getAllGamesData,
-    tabsCount,
-    handleSetSelectedGame,
-    formikEditGame,
-    handleSaveGame,
-    handleDeleteGame,
-    handleGameSearch,
+    gamesData,
+    handleGetGames,
+    // games,
+    // getAllGamesData,
+    // tabsCount,
+    // handleSetSelectedGame,
+    // formikEditGame,
+    // handleSaveGame,
+    // handleDeleteGame,
+    // handleGameSearch,
   } = useGameData();
 
   const { value: addModalBool, toggleValue: toggleAddModalValue } = useToggle();
   const { value: editModalBool, toggleValue: toggleEditModalValue } =
     useToggle();
+  const [editSelectedGame, setEditSelectedGame] = useState<GameResponseType>();
+  const { handleDeleteGame } = useDeleteGame(handleGetGames as () => void);
+
+  useEffect(() => {
+    if (!username) {
+      checkSession();
+    }
+  }, [username]);
 
   return (
     <div className=" min-h-screen">
-      <div className=" px-4 pt-4 pb-20">
-        <div className="flex justify-between  w-full">
+      {/*logo and logout*/}
+      <div className=" flex flex-col px-4 pt-4 pb-20 min-h-screen">
+        <header className="flex justify-between">
           <h1 className=" text-2xl font-bold text-center">GameTracker</h1>
           <Popover placement="bottom">
             <PopoverTrigger>
-              <Avatar name={getAvatarLetter(session?.user?.email ?? '')} />
+              <Avatar name={username.charAt(0).toUpperCase()} />
             </PopoverTrigger>
             <PopoverContent>
               <Button
                 onClick={() => {
-                  logoutHandler().catch(() =>
-                    toast.error('Error al cerrar sesión')
-                  );
+                  logOut();
                 }}
                 size="sm"
                 variant="light"
@@ -60,27 +75,28 @@ export default function Dashboard() {
               </Button>
             </PopoverContent>
           </Popover>
-        </div>
+        </header>
 
-        <div className=" flex items-center gap-x-4 mt-8">
+        {/*search and filter*/}
+        <nav className=" flex items-center gap-x-4 mt-8">
           <Autocomplete
             variant="bordered"
             color="primary"
             size="sm"
             placeholder="Search your game"
-            onInputChange={(value) => {
-              handleGameSearch(value)?.catch(() =>
-                toast.error(`Error al buscar ${value}`)
-              );
+            onInputChange={() => {
+              // handleGameSearch(value)?.catch(() =>
+              //   toast.error(`Error al buscar ${value}`)
+              // );
             }}
           >
-            {games?.data?.map((game: gameListResponseDto) => {
-              return (
-                <AutocompleteItem key={game.id} value={game.id}>
-                  {game.game_title}
-                </AutocompleteItem>
-              );
-            }) ?? []}
+            {/*{games?.data?.map((game: gameListResponseDto) => {*/}
+            {/*  return (*/}
+            {/*    <AutocompleteItem key={game.id} value={game.id}>*/}
+            {/*      {game.game_title}*/}
+            {/*    </AutocompleteItem>*/}
+            {/*  );*/}
+            {/*}) ?? []}*/}
           </Autocomplete>
           <Button
             className=" text-xl"
@@ -90,41 +106,51 @@ export default function Dashboard() {
           >
             <FiFilter />
           </Button>
-        </div>
+        </nav>
 
-        <div className="mt-6 flex flex-col gap-y-3">
-          <TabsGames
-            onChangeTab={() => {
-              getAllGamesData().catch(() => {
-                toast.error('We could not get the games');
+        {/*games list*/}
+        <main className="mt-6 flex flex-col gap-y-3 flex-1 ">
+          {/*<TabsGames*/}
+          {/*  onChangeTab={() => {*/}
+          {/*    // getAllGamesData().catch(() => {*/}
+          {/*    //   toast.error('We could not get the games');*/}
+          {/*    // });*/}
+          {/*  }}*/}
+          {/*  activeCount={tabsCount.active}*/}
+          {/*  completedCount={tabsCount.completed}*/}
+          {/*/>*/}
+          <GameFetchStatusComponent
+            isError={gamesData.isGetGamesError}
+            isLoading={gamesData.isGetGamesLoading}
+          >
+            {gamesData.data?.map((game) => {
+              const platforms = game.Platforms.map((platform) => {
+                return platform.name;
               });
-            }}
-            activeCount={tabsCount.active}
-            completedCount={tabsCount.completed}
-          />
-          {games?.data ? (
-            games?.data?.map((game: gameListResponseDto) => {
+
+              const tags = game.Tags.map((tag) => {
+                return tag.name;
+              });
+
               return (
                 <GameCard
-                  key={game.id}
-                  title={game.game_title}
-                  image={game.game_picture}
-                  platforms={game.platforms}
-                  genres={game.genres}
-                  status={game.status}
+                  key={game.ID}
+                  title={game.name}
+                  image={game.image}
+                  platforms={platforms as platformsTypes[]}
+                  genres={tags as genresTypes[]}
+                  status={game.status as statusTypes}
                   editGameHandle={() => {
-                    handleSetSelectedGame(game.id);
+                    setEditSelectedGame(game);
                     toggleEditModalValue();
                   }}
                 />
               );
-            })
-          ) : (
-            <div className=" flex-1 flex justify-center items-center h-full">
-              <Spinner size="lg" />
-            </div>
-          )}
-        </div>
+            }) ?? []}
+          </GameFetchStatusComponent>
+        </main>
+
+        {/*add game sticky button*/}
         <div className=" relative">
           <Button
             onClick={toggleAddModalValue}
@@ -134,19 +160,19 @@ export default function Dashboard() {
             Add a new game
           </Button>
           <ModalAddGame
-            handleSaveGame={handleSaveGame}
             isActived={addModalBool}
             handleModal={toggleAddModalValue}
             reloadGames={() => {
-              getAllGamesData().catch(() => {});
+              handleGetGames().catch(() => {});
             }}
           />
           <ModalEditGame
+            onSuccessfulEdit={handleGetGames as () => void}
             isActived={editModalBool}
             handleModal={toggleEditModalValue}
-            formikEditGame={formikEditGame}
+            game={editSelectedGame as GameResponseType}
             handleDeleteGame={() => {
-              handleDeleteGame().catch(() => toast.error('Error al eliminar'));
+              handleDeleteGame(editSelectedGame?.ID as number);
             }}
           />
         </div>
@@ -154,3 +180,31 @@ export default function Dashboard() {
     </div>
   );
 }
+
+interface GameFetchStatusComponentProps {
+  isLoading: boolean;
+  isError: boolean;
+  children: ReactElement | ReactElement[];
+}
+const GameFetchStatusComponent = ({
+  isError,
+  isLoading,
+  children,
+}: GameFetchStatusComponentProps): ReactElement | ReactElement[] => {
+  if (isLoading) {
+    return (
+      <div className=" flex-1 flex justify-center items-center h-32">
+        <Spinner size="lg" />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className=" flex-1 flex justify-center items-center h-full">
+        <p>Error al cargar los juegos.</p>
+      </div>
+    );
+  }
+  return children;
+};

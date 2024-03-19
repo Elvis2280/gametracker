@@ -13,28 +13,85 @@ import {
 import { gameGenres, platformList, statusList } from '@/utils/constants';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import useToggle from '@/hooks/useToggle/useToggle';
-import { formikGameFieldsTypes } from '@/types/hooks/typeUseApiGame';
 import { statusTypes } from '@/types/general/general';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import addGameSchema from '@/pages/dashboard/schema';
+import { GameResponseType } from '@/types/responses/gameResponseDto';
+import { useEffect } from 'react';
+import { useCreateGame } from '@/hooks/services/gamesbackend/useCreateGame';
 
 type Props = {
   isActived: boolean;
   handleModal: () => void;
   handleDeleteGame: () => void;
-  formikEditGame: formikGameFieldsTypes;
+  game: GameResponseType | undefined;
+  onSuccessfulEdit: () => void;
 };
 
 export default function ModalEditGame({
   isActived,
   handleModal,
-  formikEditGame,
   handleDeleteGame,
+  game,
+  onSuccessfulEdit,
 }: Props) {
   const { toggleValue, value } = useToggle();
+  const { handleUpdateGame } = useCreateGame(onSuccessfulEdit);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    defaultValues: {
+      name: '',
+      description: '',
+      image: '',
+      status: '',
+      score: 0,
+      tags: '',
+      platforms: '',
+    },
+    resolver: yupResolver(addGameSchema),
+  });
+
+  useEffect(() => {
+    if (game) {
+      const tags = game.Tags.map((tag) => tag.name);
+      const platforms = game.Platforms.map((platform) => platform.name);
+
+      reset({
+        name: game.name,
+        description: game.description,
+        image: game.image,
+        status: game.status,
+        score: game.score || 0,
+        tags: tags.join(','),
+        platforms: platforms.join(','),
+      });
+    }
+  }, [game, reset]);
+
+  const onSubmit = (data: formType) => {
+    const tags = data.tags.split(',');
+    const platforms = data.platforms.split(',');
+    if (game?.ID) {
+      handleUpdateGame({ ...data, tags, platforms, id: game.ID });
+      handleModal();
+    }
+  };
+
+  const tagsSelected = game?.Tags.map((tag) => tag.name);
+  const platformsSelected = game?.Platforms.map((platform) => platform.name);
+
   return (
     <div>
       <Modal backdrop="blur" isOpen={isActived} onClose={handleModal}>
         <ModalContent>
-          <form>
+          {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
+          <form onSubmit={handleSubmit(onSubmit)}>
             <ModalHeader>Edit Game</ModalHeader>
             <ModalBody>
               <div className=" flex justify-end pb-2">
@@ -50,26 +107,24 @@ export default function ModalEditGame({
               <div className=" flex flex-col gap-y-3">
                 <Input
                   label="Title"
-                  isInvalid={Boolean(formikEditGame.errors.gameTitle)}
-                  errorMessage={formikEditGame.errors.gameTitle?.message}
-                  defaultValue={formikEditGame.getValues().gameTitle}
-                  {...formikEditGame.register('gameTitle')}
+                  isInvalid={Boolean(errors.name)}
+                  errorMessage={errors.name?.message}
+                  defaultValue={game?.name}
+                  {...register('name')}
                 />
                 <Textarea
                   label="Description"
-                  isInvalid={Boolean(formikEditGame.errors.gameDescription)}
-                  errorMessage={formikEditGame.errors.gameDescription?.message}
-                  defaultValue={formikEditGame.getValues().gameDescription}
-                  {...formikEditGame.register('gameDescription')}
+                  isInvalid={Boolean(errors.description)}
+                  errorMessage={errors.description?.message}
+                  defaultValue={game?.description}
+                  {...register('description')}
                 />
                 <Select
                   label="Status"
-                  isInvalid={Boolean(formikEditGame.errors.status)}
-                  errorMessage={formikEditGame.errors.status?.message}
-                  defaultSelectedKeys={
-                    [formikEditGame.getValues().status] as statusTypes[]
-                  }
-                  {...formikEditGame.register('status')}
+                  isInvalid={Boolean(errors.status)}
+                  errorMessage={errors.status?.message}
+                  defaultSelectedKeys={[game?.status] as statusTypes[]}
+                  {...register('status')}
                 >
                   {statusList.map((status) => {
                     return (
@@ -80,14 +135,12 @@ export default function ModalEditGame({
                   })}
                 </Select>
                 <Select
-                  isInvalid={Boolean(formikEditGame.errors.genres)}
-                  errorMessage={formikEditGame.errors.genres?.message}
+                  isInvalid={Boolean(errors.tags)}
+                  errorMessage={errors.tags?.message}
                   selectionMode="multiple"
                   label="Categories"
-                  defaultSelectedKeys={formikEditGame
-                    .getValues()
-                    .genres.split(',')}
-                  {...formikEditGame.register('genres')}
+                  defaultSelectedKeys={tagsSelected}
+                  {...register('tags')}
                 >
                   {gameGenres.map((genre) => {
                     return (
@@ -101,12 +154,10 @@ export default function ModalEditGame({
                   selectionMode="multiple"
                   label="Platform"
                   size="sm"
-                  isInvalid={Boolean(formikEditGame.errors.platforms)}
-                  errorMessage={formikEditGame.errors.platforms?.message}
-                  defaultSelectedKeys={formikEditGame
-                    .getValues()
-                    .platforms.split(',')}
-                  {...formikEditGame.register('platforms')}
+                  isInvalid={Boolean(errors.platforms)}
+                  errorMessage={errors.platforms?.message}
+                  defaultSelectedKeys={platformsSelected}
+                  {...register('platforms')}
                 >
                   {platformList.map((plaform) => {
                     return (
@@ -169,4 +220,14 @@ export default function ModalEditGame({
       </Modal>
     </div>
   );
+}
+
+interface formType {
+  name: string;
+  description: string;
+  image: string;
+  status: string;
+  score: number;
+  tags: string;
+  platforms: string;
 }

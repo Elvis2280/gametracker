@@ -37,9 +37,11 @@ export default function GameCard({
       <Card>
         <CardHeader className=" flex flex-col gap-y-2">
           <div className="flex justify-between w-full items-center">
-            {platforms.map((platform, i) => {
-              return <PlatformIcon key={i} type={platform} />;
-            })}
+            <div className="flex items-center gap-4">
+              {platforms.map((platform, i) => {
+                return <PlatformIcon key={i} type={platform} />;
+              })}
+            </div>
             <Button
               variant="flat"
               color="primary"
@@ -50,7 +52,7 @@ export default function GameCard({
               <TbPencil />
             </Button>
           </div>
-          <div className=" flex justify-start w-full gap-x-2">
+          <div className=" flex justify-start w-full gap-x-2 flex-wrap gap-2">
             {genres.map((genre, i) => {
               return (
                 <Chip key={i} color="primary" variant="flat" size="sm">

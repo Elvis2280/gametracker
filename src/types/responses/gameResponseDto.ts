@@ -1,116 +1,74 @@
-import { genresTypes, platformsTypes, statusTypes } from '../general/general';
+// Game external api types
+import { plaformsType, tagsType } from '@/types/general/games';
 
-export type gameListResponseDto = {
-  id: number;
-  created_at: string;
-  game_title: string;
-  game_description: string;
-  game_picture: string;
-  status: statusTypes;
-  user_id: number;
-  platforms: platformsTypes[];
-  genres: genresTypes[];
-};
-
-export interface gamesApiResponseDto {
+export interface GamesResultsData {
   count: number;
   next: string;
-  previous: null;
-  results: gamesApiDto[];
-  user_platforms: boolean;
+  previous: string;
+  results: OneGameResponse[];
 }
 
-export interface gamesApiDto {
+export interface RootObjectResultsEsrb_rating {
+  id: number;
   slug: string;
   name: string;
-  playtime: number;
-  platforms: Platform[];
-  stores: Store[] | null;
+}
+
+export interface RootObjectResultsPlatformsPlatform {
+  id: number;
+  slug: string;
+  name: string;
+}
+
+export interface RootObjectResultsPlatformsRequirements {
+  minimum: string;
+  recommended: string;
+}
+
+export interface RootObjectResultsPlatforms {
+  platform: RootObjectResultsPlatformsPlatform;
+  released_at: string;
+  requirements: RootObjectResultsPlatformsRequirements;
+}
+
+export interface OneGameResponse {
+  id: number;
+  slug: string;
+  name: string;
   released: string;
   tba: boolean;
   background_image: string;
   rating: number;
   rating_top: number;
-  ratings: Rating[];
+  ratings: unknown[];
   ratings_count: number;
-  reviews_text_count: number;
+  reviews_text_count: string;
   added: number;
-  added_by_status: AddedByStatus | null;
-  metacritic: number | null;
+  added_by_status: unknown;
+  metacritic: number;
+  playtime: number;
   suggestions_count: number;
   updated: string;
-  id: number;
-  score: string;
-  clip: null;
-  tags: Tag[];
-  esrb_rating: EsrbRating | null;
-  user_game: null;
-  reviews_count: number;
-  community_rating?: number;
-  saturated_color: Color;
-  dominant_color: Color;
-  short_screenshots: ShortScreenshot[];
-  parent_platforms: Platform[];
-  genres: Genre[];
+  esrb_rating: RootObjectResultsEsrb_rating;
+  platforms: RootObjectResultsPlatforms[];
 }
 
-export interface AddedByStatus {
-  yet?: number;
-  owned?: number;
-  beaten?: number;
-  toplay?: number;
-  dropped?: number;
-  playing?: number;
-}
+// Game internal api types
 
-export enum Color {
-  The0F0F0F = '0f0f0f',
-}
-
-export interface EsrbRating {
-  id: number;
-  name: string;
-  slug: string;
-  name_en: string;
-  name_ru: string;
-}
-
-export interface Genre {
-  id: number;
-  name: string;
-  slug: string;
-}
-
-export interface Platform {
-  platform: Genre;
-}
-
-export interface Rating {
-  id: number;
-  title: string;
-  count: number;
-  percent: number;
-}
-
-export interface ShortScreenshot {
-  id: number;
+export interface GameResponseType {
+  CreatedAt: string;
+  ID: number;
+  Platforms: plaformsType[];
+  Tags: tagsType[];
+  UpdatedAt: string;
+  description: string;
+  email: string;
   image: string;
-}
-
-export interface Store {
-  store: Genre;
-}
-
-export interface Tag {
-  id: number;
   name: string;
-  slug: string;
-  language: Language;
-  games_count: number;
-  image_background: null | string;
+  status: string;
+  score: number;
 }
 
-export enum Language {
-  Eng = 'eng',
-  Rus = 'rus',
+export interface GetAllGamesResponseType {
+  games: GameResponseType[];
 }
