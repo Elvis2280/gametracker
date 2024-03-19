@@ -26,7 +26,7 @@ module.exports = {
     },
     project: ['./tsconfig.json', './postcss.config.js', './vite.config.ts'],
   },
-  plugins: ['react', '@typescript-eslint', 'react-hooks', 'prettier'],
+  plugins: ['react', '@typescript-eslint', 'react-hooks', 'prettier', "@tanstack/query"],
   settings: {
     react: {
       version: 'detect', // Automatically detect the React version
@@ -45,5 +45,8 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': 'error',
     'react/react-in-jsx-scope': 'off',
     '@typescript-eslint/no-misused-promises': 'error',
+    "@tanstack/query/exhaustive-deps": "error",
+    "@tanstack/query/stable-query-client": "error",
+    // '@typescript-eslint/no-unsafe-member-access': 'off',
   },
 };

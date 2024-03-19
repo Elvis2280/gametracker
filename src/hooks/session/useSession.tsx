@@ -1,88 +1,79 @@
-import { useMemo, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import supabase from '@/utils/databaseClient';
-import { Session, User } from '@supabase/supabase-js';
 import { toast } from 'react-toastify';
+import { backendApi } from '@/utils/axiosInstances';
+import { useMutation } from '@tanstack/react-query';
+import { loginResponseDto } from '@/types/responses/userResponseDto';
+import { AxiosError } from 'axios';
 
-type UserSupa = {
-  user: User | null;
-  session: Session | null;
-};
+export default function useSession(): useSessionReturn {
+  const navigate = useNavigate();
 
-export default function useSession() {
-  const [session, setSession] = useState<UserSupa | null>(null);
-  const navegate = useNavigate();
+  const { mutate: signupMutate } = useMutation({
+    mutationFn: async (data: signUpDataType) => {
+      const { username, password, email } = data;
+      return await backendApi.post('signup', { username, email, password });
+    },
+    onSuccess: () => {
+      toast.success('Usuario creado correctamente');
+      navigate('/');
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Error al crear el usuario');
+    },
+  });
 
-  useMemo(() => {
-    if (!session) {
-      const storageSession = sessionStorage.getItem('gametrackerSession');
-      if (storageSession) {
-        const data = JSON.parse(storageSession) as UserSupa;
-        setSession(data);
+  const { mutate: loginMutate } = useMutation({
+    mutationFn: async (data: loginDataType): Promise<loginResponseDto> => {
+      const { password, email } = data;
+      return await backendApi.post('login', { email, password });
+    },
+    onSuccess: (data) => {
+      localStorage.setItem('token', data?.data.token || '');
+      toast.success('Sesión iniciada correctamente');
+      navigate('/home');
+    },
+    onError: (error: AxiosError<{ error: string | undefined }>) => {
+      toast.error(error?.response?.data.error || 'Error al iniciar sesión');
+    },
+  });
+
+  const logOut = (): void => {
+    localStorage.removeItem('token');
+    navigate('/');
+  };
+
+  useEffect(() => {
+    backendApi.interceptors.request.use((config) => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        navigate('/home');
+        config.headers.Authorization = `Bearer ${token}`;
       }
-    }
-  }, [session]);
-
-  const loginHandler = async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
+      return config;
     });
-    navegate('/');
-    if (error) {
-      return toast.error('Error al iniciar sesión');
-    }
-
-    setSession(data);
-    sessionStorage.setItem('gametrackerSession', JSON.stringify(data));
-  };
-
-  const checkSession = () => {
-    if (!session) {
-      navegate('/login');
-    }
-  };
-
-  const logoutHandler = async () => {
-    const { error } = await supabase.auth.signOut();
-
-    if (!error) {
-      setSession(null);
-      sessionStorage.removeItem('gametrackerSession');
-      toast.success('Hasta luego!');
-      navegate('/login');
-    }
-  };
-
-  const resetPasswordHandler = async (email: string) => {
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
-    });
-    if (error) {
-      toast.error('We could not find a user with that email');
-    } else {
-      toast.success('Check your email for the password reset link');
-    }
-  };
-
-  const changePasswordHandler = async (password: string) => {
-    try {
-      const { error } = await supabase.auth.updateUser({ password });
-      if (error)
-        throw new Error('Something went wrong, please try again later');
-      navegate('/login');
-      toast.success('Password changed successfully');
-    } catch (error) {
-      throw new Error('Something went wrong, please try again later');
-    }
-  };
+  }, []);
 
   return {
-    session,
-    loginHandler,
-    logoutHandler,
-    resetPasswordHandler,
-    changePasswordHandler,
-    checkSession,
+    signupHanler: signupMutate,
+    loginHandler: loginMutate,
+    logOut,
   };
 }
+
+interface useSessionReturn {
+  signupHanler: (data: signUpDataType) => void;
+  loginHandler: (data: loginDataType) => void;
+  logOut: () => void;
+}
+
+type signUpDataType = {
+  username: string;
+  email: string;
+  password: string;
+};
+
+type loginDataType = {
+  email: string;
+  password: string;
+};
