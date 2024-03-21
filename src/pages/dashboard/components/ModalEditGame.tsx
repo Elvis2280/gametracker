@@ -85,7 +85,6 @@ export default function ModalEditGame({
     const platforms = data.platforms.split(',');
     if (game?.ID) {
       handleUpdateGame({ ...data, tags, platforms, id: game.ID });
-      handleModal();
     }
   };
 
