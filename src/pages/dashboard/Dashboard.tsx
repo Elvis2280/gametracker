@@ -229,7 +229,7 @@ const GameFetchStatusComponent = ({
     return (
       <div className=" flex-1 flex justify-center items-center h-full flex-col gap-4">
         <Image src={'/nogame.svg'} alt="No games" />
-        <p className={'text-xl'}>No games completed yet.</p>
+        <p className={'text-xl'}>No games in this tab yet.</p>
       </div>
     );
   }
