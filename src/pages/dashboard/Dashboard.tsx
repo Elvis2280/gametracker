@@ -2,6 +2,7 @@ import {
   Autocomplete,
   Avatar,
   Button,
+  Image,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -23,6 +24,8 @@ import {
   statusTypes,
 } from '@/types/general/general';
 import { useDeleteGame } from '@/hooks/services/gamesbackend/useDeleteGame';
+import TabsGames from '@/pages/dashboard/components/TabsGames';
+import { gameStatus } from '@/utils/constants';
 
 export default function Dashboard() {
   const { logOut } = useSession();
@@ -31,9 +34,9 @@ export default function Dashboard() {
   const {
     gamesData,
     handleGetGames,
+    count,
     // games,
     // getAllGamesData,
-    // tabsCount,
     // handleSetSelectedGame,
     // formikEditGame,
     // handleSaveGame,
@@ -46,12 +49,50 @@ export default function Dashboard() {
     useToggle();
   const [editSelectedGame, setEditSelectedGame] = useState<GameResponseType>();
   const { handleDeleteGame } = useDeleteGame(handleGetGames as () => void);
+  const [tabActive, setTabActive] = useState<'active' | 'completed'>('active');
 
   useEffect(() => {
     if (!username) {
       checkSession();
     }
   }, [username]);
+
+  const buildListCard = () => {
+    const gamesDataFiltered = gamesData.data?.filter((game) => {
+      if (tabActive === 'active') {
+        return game.status !== gameStatus.completed;
+      } else {
+        return game.status === gameStatus.completed;
+      }
+    });
+
+    return (
+      gamesDataFiltered?.map((game) => {
+        const platforms = game.Platforms.map((platform) => {
+          return platform.name;
+        });
+
+        const tags = game.Tags.map((tag) => {
+          return tag.name;
+        });
+
+        return (
+          <GameCard
+            key={game.ID}
+            title={game.name}
+            image={game.image}
+            platforms={platforms as platformsTypes[]}
+            genres={tags as genresTypes[]}
+            status={game.status as statusTypes}
+            editGameHandle={() => {
+              setEditSelectedGame(game);
+              toggleEditModalValue();
+            }}
+          />
+        );
+      }) ?? []
+    );
+  };
 
   return (
     <div className=" min-h-screen">
@@ -85,9 +126,7 @@ export default function Dashboard() {
             size="sm"
             placeholder="Search your game"
             onInputChange={() => {
-              // handleGameSearch(value)?.catch(() =>
-              //   toast.error(`Error al buscar ${value}`)
-              // );
+              // handleGameSearch();
             }}
           >
             {/*{games?.data?.map((game: gameListResponseDto) => {*/}
@@ -110,43 +149,22 @@ export default function Dashboard() {
 
         {/*games list*/}
         <main className="mt-6 flex flex-col gap-y-3 flex-1 ">
-          {/*<TabsGames*/}
-          {/*  onChangeTab={() => {*/}
-          {/*    // getAllGamesData().catch(() => {*/}
-          {/*    //   toast.error('We could not get the games');*/}
-          {/*    // });*/}
-          {/*  }}*/}
-          {/*  activeCount={tabsCount.active}*/}
-          {/*  completedCount={tabsCount.completed}*/}
-          {/*/>*/}
+          <TabsGames
+            onChangeTab={(v) => {
+              if (v !== gameStatus.completed.toLowerCase()) {
+                setTabActive('active');
+              } else {
+                setTabActive('completed');
+              }
+            }}
+            activeCount={(count?.active as number) ?? 0}
+            completedCount={(count?.completed as number) ?? 0}
+          />
           <GameFetchStatusComponent
             isError={gamesData.isGetGamesError}
             isLoading={gamesData.isGetGamesLoading}
           >
-            {gamesData.data?.map((game) => {
-              const platforms = game.Platforms.map((platform) => {
-                return platform.name;
-              });
-
-              const tags = game.Tags.map((tag) => {
-                return tag.name;
-              });
-
-              return (
-                <GameCard
-                  key={game.ID}
-                  title={game.name}
-                  image={game.image}
-                  platforms={platforms as platformsTypes[]}
-                  genres={tags as genresTypes[]}
-                  status={game.status as statusTypes}
-                  editGameHandle={() => {
-                    setEditSelectedGame(game);
-                    toggleEditModalValue();
-                  }}
-                />
-              );
-            }) ?? []}
+            {buildListCard()}
           </GameFetchStatusComponent>
         </main>
 
@@ -184,7 +202,7 @@ export default function Dashboard() {
 interface GameFetchStatusComponentProps {
   isLoading: boolean;
   isError: boolean;
-  children: ReactElement | ReactElement[];
+  children: ReactElement[];
 }
 const GameFetchStatusComponent = ({
   isError,
@@ -203,6 +221,15 @@ const GameFetchStatusComponent = ({
     return (
       <div className=" flex-1 flex justify-center items-center h-full">
         <p>Error al cargar los juegos.</p>
+      </div>
+    );
+  }
+
+  if (children.length === 0) {
+    return (
+      <div className=" flex-1 flex justify-center items-center h-full flex-col gap-4">
+        <Image src={'/nogame.svg'} alt="No games" />
+        <p className={'text-xl'}>No games completed yet.</p>
       </div>
     );
   }

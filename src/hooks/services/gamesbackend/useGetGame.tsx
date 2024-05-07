@@ -9,6 +9,7 @@ import {
   GameResponseType,
   GetAllGamesResponseType,
 } from '@/types/responses/gameResponseDto';
+import { AxiosResponse } from 'axios';
 
 export default function useGameData(): useGameDataReturn {
   const { email } = useSessionData();
@@ -32,6 +33,28 @@ export default function useGameData(): useGameDataReturn {
     },
     enabled: Boolean(email),
   });
+
+  const { data: count } = useQuery({
+    queryKey: ['gamesCount', email],
+    queryFn: async (): Promise<GameCountResponse> => {
+      const response: AxiosResponse<GameCountResponse> = await backendApi.get(
+        'games/count',
+        {
+          params: {
+            email: email,
+          },
+        }
+      );
+
+      if (response.status !== 200) {
+        throw new Error('Error al obtener los juegos');
+      }
+
+      return response.data;
+    },
+    enabled: Boolean(email),
+  });
+
   return {
     gamesData: {
       isGetGamesLoading,
@@ -39,9 +62,9 @@ export default function useGameData(): useGameDataReturn {
       data: games?.games,
     },
     handleGetGames,
+    count: count?.counts,
   };
 }
-
 interface useGameDataReturn {
   gamesData: {
     isGetGamesLoading: boolean;
@@ -51,4 +74,17 @@ interface useGameDataReturn {
   handleGetGames: (
     options?: RefetchOptions | undefined
   ) => Promise<QueryObserverResult<GetAllGamesResponseType, Error>>;
+  count:
+    | {
+        active: number;
+        completed: number;
+      }
+    | undefined;
+}
+
+interface GameCountResponse {
+  counts: {
+    active: number;
+    completed: number;
+  };
 }

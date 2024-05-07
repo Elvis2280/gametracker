@@ -35,7 +35,7 @@ export default function GameCard({
   return (
     <div>
       <Card>
-        <CardHeader className=" flex flex-col gap-y-2">
+        <CardHeader className=" flex flex-col gap-y-4">
           <div className="flex justify-between w-full items-center">
             <div className="flex items-center gap-4">
               {platforms.map((platform, i) => {
