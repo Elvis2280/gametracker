@@ -63,6 +63,7 @@ export default function useGameData(): useGameDataReturn {
   return {
     handleSetActiveGames: setIsActiveGames,
     handleSetPage: setPage,
+    currentPage: page,
     gamesData: {
       isGetGamesLoading,
       isGetGamesError,
@@ -75,6 +76,7 @@ export default function useGameData(): useGameDataReturn {
 interface useGameDataReturn {
   handleSetActiveGames: (isActive: boolean) => void;
   handleSetPage: (page: number) => void;
+  currentPage: number;
   gamesData: {
     isGetGamesLoading: boolean;
     isGetGamesError: boolean;

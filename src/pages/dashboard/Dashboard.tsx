@@ -38,6 +38,7 @@ export default function Dashboard() {
     count,
     handleSetActiveGames,
     handleSetPage,
+    currentPage,
     // games,
     // getAllGamesData,
     // handleSetSelectedGame,
@@ -176,6 +177,7 @@ export default function Dashboard() {
           {totalPages > 1 && (
             <div className={'flex justify-center items-center py-2'}>
               <Pagination
+                page={currentPage}
                 total={totalPages}
                 onChange={(pag) => {
                   handleSetPage(pag);
