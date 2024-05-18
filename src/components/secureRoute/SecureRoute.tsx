@@ -1,4 +1,4 @@
-import { useSessionData } from "@/context/SessionContext";
+import { useSessionData } from '@/context/SessionContext';
 import { ReactElement, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 

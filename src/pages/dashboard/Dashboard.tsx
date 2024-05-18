@@ -3,7 +3,6 @@ import {
   Avatar,
   Button,
   Image,
-  pagination,
   Pagination,
   Popover,
   PopoverContent,
