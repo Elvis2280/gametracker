@@ -70,5 +70,10 @@ export interface GameResponseType {
 }
 
 export interface GetAllGamesResponseType {
-  games: GameResponseType[];
+  status: number;
+  data: GameResponseType[];
+  pagination: {
+    totalPages: number;
+    currentPage: number;
+  };
 }

@@ -5,14 +5,16 @@ import {
 } from '@tanstack/react-query';
 import { backendApi } from '@/utils/axiosInstances';
 import { useSessionData } from '@/context/SessionContext';
-import {
-  GameResponseType,
-  GetAllGamesResponseType,
-} from '@/types/responses/gameResponseDto';
+import { GetAllGamesResponseType } from '@/types/responses/gameResponseDto';
 import { AxiosResponse } from 'axios';
-
+import { useState } from 'react';
+// import { useState } from 'react';
+// import { gameStatus } from '@/utils/constants';
 export default function useGameData(): useGameDataReturn {
   const { email } = useSessionData();
+  const [isActiveGames, setIsActiveGames] = useState(true);
+  const [page, setPage] = useState(1);
+  const perPage = 10;
 
   // Query get games
   const {
@@ -21,11 +23,14 @@ export default function useGameData(): useGameDataReturn {
     isError: isGetGamesError,
     isLoading: isGetGamesLoading,
   } = useQuery({
-    queryKey: ['games', email],
+    queryKey: ['games', email, perPage, isActiveGames, page],
     queryFn: async (): Promise<GetAllGamesResponseType> => {
       const response = await backendApi.get('games', {
         params: {
           email: email,
+          page: page,
+          isActiveGames: isActiveGames,
+          limit: perPage,
         },
       });
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-return
@@ -56,20 +61,24 @@ export default function useGameData(): useGameDataReturn {
   });
 
   return {
+    handleSetActiveGames: setIsActiveGames,
+    handleSetPage: setPage,
     gamesData: {
       isGetGamesLoading,
       isGetGamesError,
-      data: games?.games,
+      data: games,
     },
     handleGetGames,
     count: count?.counts,
   };
 }
 interface useGameDataReturn {
+  handleSetActiveGames: (isActive: boolean) => void;
+  handleSetPage: (page: number) => void;
   gamesData: {
     isGetGamesLoading: boolean;
     isGetGamesError: boolean;
-    data: GameResponseType[] | undefined;
+    data: GetAllGamesResponseType | undefined;
   };
   handleGetGames: (
     options?: RefetchOptions | undefined
@@ -88,3 +97,5 @@ interface GameCountResponse {
     completed: number;
   };
 }
+
+// type GameStatusType = 'active' | 'completed';
