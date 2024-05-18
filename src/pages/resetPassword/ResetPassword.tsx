@@ -19,6 +19,7 @@ export default function ResetPassword() {
     resolver: yupResolver(resetPasswordSchema),
   });
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   const onSubmit = async (data: resetPasswordTypes) => {
     // await changePasswordHandler(data.password);
     console.log(data);

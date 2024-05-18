@@ -58,8 +58,7 @@ export default function useApiGame(): querySearchApiReturn {
         .catch(() => {
           toast.error('Error al buscar los juegos');
         });
-    }
-    else{
+    } else {
       setSearchGamesData(undefined);
     }
   }, [query, searchGames]);

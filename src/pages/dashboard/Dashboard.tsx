@@ -3,6 +3,7 @@ import {
   Avatar,
   Button,
   Image,
+  Pagination,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -35,6 +36,8 @@ export default function Dashboard() {
     gamesData,
     handleGetGames,
     count,
+    handleSetActiveGames,
+    handleSetPage,
     // games,
     // getAllGamesData,
     // handleSetSelectedGame,
@@ -58,7 +61,7 @@ export default function Dashboard() {
   }, [username]);
 
   const buildListCard = () => {
-    const gamesDataFiltered = gamesData.data?.filter((game) => {
+    const gamesDataFiltered = gamesData.data?.data?.filter((game) => {
       if (tabActive === 'active') {
         return game.status !== gameStatus.completed;
       } else {
@@ -93,6 +96,8 @@ export default function Dashboard() {
       }) ?? []
     );
   };
+
+  const totalPages = gamesData.data?.pagination.totalPages ?? 1;
 
   return (
     <div className=" min-h-screen">
@@ -153,8 +158,10 @@ export default function Dashboard() {
             onChangeTab={(v) => {
               if (v !== gameStatus.completed.toLowerCase()) {
                 setTabActive('active');
+                handleSetActiveGames(true);
               } else {
                 setTabActive('completed');
+                handleSetActiveGames(false);
               }
             }}
             activeCount={(count?.active as number) ?? 0}
@@ -166,10 +173,20 @@ export default function Dashboard() {
           >
             {buildListCard()}
           </GameFetchStatusComponent>
+          {totalPages > 1 && (
+            <div className={'flex justify-center items-center py-2'}>
+              <Pagination
+                total={totalPages}
+                onChange={(pag) => {
+                  handleSetPage(pag);
+                }}
+              />
+            </div>
+          )}
         </main>
 
         {/*add game sticky button*/}
-        <div className=" relative">
+        <div className="relative">
           <Button
             onClick={toggleAddModalValue}
             color="primary"
