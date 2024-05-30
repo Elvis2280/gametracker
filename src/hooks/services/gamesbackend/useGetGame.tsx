@@ -8,13 +8,14 @@ import { useSessionData } from '@/context/SessionContext';
 import { GetAllGamesResponseType } from '@/types/responses/gameResponseDto';
 import { AxiosResponse } from 'axios';
 import { useState } from 'react';
-// import { useState } from 'react';
-// import { gameStatus } from '@/utils/constants';
+import useDebounce from '@/hooks/useDebounce';
 export default function useGameData(): useGameDataReturn {
   const { email } = useSessionData();
   const [isActiveGames, setIsActiveGames] = useState(true);
   const [page, setPage] = useState(1);
   const perPage = 10;
+  const [search, setSearch] = useState('');
+  const { debouncedValue } = useDebounce(search, 500);
 
   // Query get games
   const {
@@ -23,7 +24,7 @@ export default function useGameData(): useGameDataReturn {
     isError: isGetGamesError,
     isLoading: isGetGamesLoading,
   } = useQuery({
-    queryKey: ['games', email, perPage, isActiveGames, page],
+    queryKey: ['games', email, perPage, isActiveGames, page, debouncedValue],
     queryFn: async (): Promise<GetAllGamesResponseType> => {
       const response = await backendApi.get('games', {
         params: {
@@ -31,6 +32,7 @@ export default function useGameData(): useGameDataReturn {
           page: page,
           isActiveGames: isActiveGames,
           limit: perPage,
+          search: debouncedValue,
         },
       });
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-return
@@ -61,6 +63,8 @@ export default function useGameData(): useGameDataReturn {
   });
 
   return {
+    search,
+    handleSetSearch: setSearch,
     handleSetActiveGames: setIsActiveGames,
     handleSetPage: setPage,
     currentPage: page,
@@ -74,6 +78,8 @@ export default function useGameData(): useGameDataReturn {
   };
 }
 interface useGameDataReturn {
+  search: string;
+  handleSetSearch: (search: string) => void;
   handleSetActiveGames: (isActive: boolean) => void;
   handleSetPage: (page: number) => void;
   currentPage: number;
@@ -99,5 +105,3 @@ interface GameCountResponse {
     completed: number;
   };
 }
-
-// type GameStatusType = 'active' | 'completed';

@@ -39,6 +39,8 @@ export default function Dashboard() {
     handleSetActiveGames,
     handleSetPage,
     currentPage,
+    handleSetSearch,
+    search,
     // games,
     // getAllGamesData,
     // handleSetSelectedGame,
@@ -131,8 +133,9 @@ export default function Dashboard() {
             color="primary"
             size="sm"
             placeholder="Search your game"
-            onInputChange={() => {
-              // handleGameSearch();
+            value={search}
+            onInputChange={(val) => {
+              handleSetSearch(val);
             }}
           >
             {/*{games?.data?.map((game: gameListResponseDto) => {*/}
