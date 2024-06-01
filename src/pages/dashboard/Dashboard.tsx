@@ -1,15 +1,14 @@
 import {
-  Autocomplete,
   Avatar,
   Button,
   Image,
+  Input,
   Pagination,
   Popover,
   PopoverContent,
   PopoverTrigger,
   Spinner,
 } from '@nextui-org/react';
-import { FiFilter } from 'react-icons/fi';
 import GameCard from '@/components/gameCard/GameCard';
 import useSession from '@/hooks/session/useSession';
 import useGameData from '@/hooks/services/gamesbackend/useGetGame';
@@ -19,6 +18,8 @@ import useToggle from '@/hooks/useToggle/useToggle';
 import ModalEditGame from './components/ModalEditGame';
 import { useSessionData } from '@/context/SessionContext';
 import { ReactElement, useEffect, useState } from 'react';
+import { FiSearch } from 'react-icons/fi';
+
 import {
   genresTypes,
   platformsTypes,
@@ -41,13 +42,6 @@ export default function Dashboard() {
     currentPage,
     handleSetSearch,
     search,
-    // games,
-    // getAllGamesData,
-    // handleSetSelectedGame,
-    // formikEditGame,
-    // handleSaveGame,
-    // handleDeleteGame,
-    // handleGameSearch,
   } = useGameData();
 
   const { value: addModalBool, toggleValue: toggleAddModalValue } = useToggle();
@@ -128,32 +122,17 @@ export default function Dashboard() {
 
         {/*search and filter*/}
         <nav className=" flex items-center gap-x-4 mt-8">
-          <Autocomplete
+          <Input
             variant="bordered"
             color="primary"
             size="sm"
             placeholder="Search your game"
             value={search}
-            onInputChange={(val) => {
-              handleSetSearch(val);
+            onChange={(e) => {
+              handleSetSearch(e.target.value);
             }}
-          >
-            {/*{games?.data?.map((game: gameListResponseDto) => {*/}
-            {/*  return (*/}
-            {/*    <AutocompleteItem key={game.id} value={game.id}>*/}
-            {/*      {game.game_title}*/}
-            {/*    </AutocompleteItem>*/}
-            {/*  );*/}
-            {/*}) ?? []}*/}
-          </Autocomplete>
-          <Button
-            className=" text-xl"
-            variant="bordered"
-            color="primary"
-            isIconOnly
-          >
-            <FiFilter />
-          </Button>
+            endContent={<FiSearch />}
+          />
         </nav>
 
         {/*games list*/}
