@@ -42,6 +42,7 @@ export default function Dashboard() {
     currentPage,
     handleSetSearch,
     search,
+    fetchCount,
   } = useGameData();
 
   const { value: addModalBool, toggleValue: toggleAddModalValue } = useToggle();
@@ -183,10 +184,14 @@ export default function Dashboard() {
             handleModal={toggleAddModalValue}
             reloadGames={() => {
               handleGetGames().catch(() => {});
+              fetchCount().catch(() => {});
             }}
           />
           <ModalEditGame
-            onSuccessfulEdit={handleGetGames as () => void}
+            onSuccessfulEdit={() => {
+              handleGetGames().catch(() => {});
+              fetchCount().catch(() => {});
+            }}
             isActived={editModalBool}
             handleModal={toggleEditModalValue}
             game={editSelectedGame as GameResponseType}

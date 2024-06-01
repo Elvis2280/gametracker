@@ -41,7 +41,7 @@ export default function useGameData(): useGameDataReturn {
     enabled: Boolean(email),
   });
 
-  const { data: count } = useQuery({
+  const { data: count, refetch: fetchCount } = useQuery({
     queryKey: ['gamesCount', email],
     queryFn: async (): Promise<GameCountResponse> => {
       const response: AxiosResponse<GameCountResponse> = await backendApi.get(
@@ -63,6 +63,7 @@ export default function useGameData(): useGameDataReturn {
   });
 
   return {
+    fetchCount,
     search,
     handleSetSearch: setSearch,
     handleSetActiveGames: setIsActiveGames,
@@ -78,6 +79,7 @@ export default function useGameData(): useGameDataReturn {
   };
 }
 interface useGameDataReturn {
+  fetchCount: () => Promise<QueryObserverResult<GameCountResponse, Error>>;
   search: string;
   handleSetSearch: (search: string) => void;
   handleSetActiveGames: (isActive: boolean) => void;
