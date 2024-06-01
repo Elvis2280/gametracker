@@ -9,7 +9,6 @@ import {
   PopoverTrigger,
   Spinner,
 } from '@nextui-org/react';
-import { FiFilter } from 'react-icons/fi';
 import GameCard from '@/components/gameCard/GameCard';
 import useSession from '@/hooks/session/useSession';
 import useGameData from '@/hooks/services/gamesbackend/useGetGame';
